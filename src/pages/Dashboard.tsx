@@ -9,39 +9,29 @@ import Loading from '../components/Loading';
 import dayjs from 'dayjs';
 
 const Dashboard = () => {
-  // Estado para controlar mês e ano selecionados
   const [month, setMonth] = useState(new Date().getMonth() + 1);
   const [year, setYear] = useState(new Date().getFullYear());
-  
-  // Estado para armazenar dados do dashboard
   const [summary, setSummary] = useState({
     totalIncomes: 0,
     totalExpenses: 0,
     balance: 0,
     expensesByCategory: []
   });
-
-  // Estado para dados do gráfico de histórico mensal
   const [monthlyData, setMonthlyData] = useState([]);
-  
-  // Estado para controlar carregamento
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
 
   // Cores para o gráfico de pizza
-  const COLORS = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#8AC926', '#1982C4'];
+  const COLORS = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'];
 
   // Buscar dados do resumo do mês atual
   useEffect(() => {
     const fetchSummary = async () => {
       try {
         setLoading(true);
-        setError('');
         const data = await getTransactionSummary(month, year);
         setSummary(data);
       } catch (err) {
         console.error('Erro ao buscar resumo:', err);
-        setError('Não foi possível carregar os dados financeiros');
       } finally {
         setLoading(false);
       }
@@ -50,7 +40,7 @@ const Dashboard = () => {
     fetchSummary();
   }, [month, year]);
 
-  // Buscar dados históricos para o gráfico de barras
+  // Buscar dados históricos
   useEffect(() => {
     const fetchHistoricalData = async () => {
       try {
@@ -65,13 +55,11 @@ const Dashboard = () => {
           const monthNum = date.getMonth() + 1;
           const yearNum = date.getFullYear();
           
-          // Buscar as transações deste mês
           const transactions = await getTransactions({ 
             month: monthNum, 
             year: yearNum 
           });
           
-          // Calcular totais
           let monthlyExpenses = 0;
           let monthlyIncome = 0;
           
@@ -83,7 +71,6 @@ const Dashboard = () => {
             }
           });
           
-          // Formatar o nome do mês
           const monthName = dayjs().month(date.getMonth()).format('MMM');
           
           data.unshift({
@@ -102,12 +89,9 @@ const Dashboard = () => {
     fetchHistoricalData();
   }, [month, year]);
 
-  // Formatador de valor para o tooltip do gráfico
-  const formatTooltipValue = (value) => {
-    return formatCurrency(value);
-  };
+  // Formatador para o tooltip
+  const formatTooltipValue = (value) => formatCurrency(value);
 
-  // Renderização condicional durante carregamento
   if (loading) {
     return (
       <div className="container-app py-8">
@@ -122,15 +106,12 @@ const Dashboard = () => {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
         <h1 className="text-2xl font-bold mb-4 md:mb-0">Dashboard</h1>
         
-        {/* Seletor de mês e ano */}
-        <div className="w-full md:w-auto">
-          <MonthYearSelector
-            month={month}
-            year={year}
-            onMonthChange={setMonth}
-            onYearChange={setYear}
-          />
-        </div>
+        <MonthYearSelector
+          month={month}
+          year={year}
+          onMonthChange={setMonth}
+          onYearChange={setYear}
+        />
       </div>
       
       {/* Cards de resumo */}
@@ -138,12 +119,7 @@ const Dashboard = () => {
         {/* Card de saldo */}
         <Card 
           icon={<Wallet size={20} />} 
-          title={
-            <div className="flex items-center gap-2">
-              <Wallet size={16} />
-              <span>Saldo</span>
-            </div>
-          }
+          title="Saldo"
           hoverable
           glowEffect={summary.balance > 0}
         >
@@ -157,12 +133,7 @@ const Dashboard = () => {
         {/* Card de receitas */}
         <Card 
           icon={<ArrowUp size={20} />} 
-          title={
-            <div className="flex items-center gap-2">
-              <ArrowUp size={16} />
-              <span>Receitas</span>
-            </div>
-          }
+          title="Receitas"
           hoverable
         >
           <p className="text-2xl font-semibold text-primary mt-2">
@@ -173,12 +144,7 @@ const Dashboard = () => {
         {/* Card de despesas */}
         <Card 
           icon={<ArrowDown size={20} />} 
-          title={
-            <div className="flex items-center gap-2">
-              <ArrowDown size={16} />
-              <span>Despesas</span>
-            </div>
-          }
+          title="Despesas"
           hoverable
         >
           <p className="text-2xl font-semibold text-red-500 mt-2">
@@ -238,7 +204,7 @@ const Dashboard = () => {
                 <BarChart data={monthlyData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
                   <XAxis dataKey="name" stroke="#94A3B8" />
-                  <YAxis stroke="#94A3B8" tickFormatter={(value) => value} />
+                  <YAxis stroke="#94A3B8" />
                   <Tooltip 
                     formatter={formatTooltipValue}
                     contentStyle={{ backgroundColor: '#1A1A1A', borderColor: '#2A2A2A' }}
@@ -256,18 +222,6 @@ const Dashboard = () => {
             )}
           </div>
         </Card>
-      </div>
-
-      {/* Dica financeira */}
-      <div className="p-4 border border-primary border-opacity-30 rounded-xl bg-primary bg-opacity-5">
-        <h3 className="text-primary font-medium flex items-center gap-2">
-          <span className="bg-primary bg-opacity-20 p-2 rounded-full">💡</span>
-          Dica financeira
-        </h3>
-        <p className="mt-2 text-sm text-muted">
-          Ao economizar 20% da sua renda mensal, você conseguirá atingir metas financeiras mais rapidamente 
-          e construir uma reserva de emergência sólida.
-        </p>
       </div>
     </div>
   );

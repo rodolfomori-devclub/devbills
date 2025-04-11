@@ -12,35 +12,13 @@ import { Transaction } from '../types';
 import { formatCurrency, formatDate } from '../utils/formatters';
 
 const Transactions = () => {
-  // Estado para o mês e ano selecionados
   const [month, setMonth] = useState(new Date().getMonth() + 1);
   const [year, setYear] = useState(new Date().getFullYear());
-  
-  // Estado para a busca
   const [searchTerm, setSearchTerm] = useState('');
-  
-  // Estado para as transações
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  
-  // Estado para controlar exclusão
   const [deletingId, setDeletingId] = useState<string | null>(null);
-
-  // Função para obter o ID da transação
-  const getTransactionId = (transaction: any): string | undefined => {
-    // Verifica se existe transaction._id
-    if (transaction._id) {
-      return transaction._id;
-    }
-    
-    // Verifica se existe transaction.id
-    if (transaction.id) {
-      return transaction.id;
-    }
-    
-    return undefined;
-  };
 
   // Buscar transações
   useEffect(() => {
@@ -49,7 +27,6 @@ const Transactions = () => {
         setLoading(true);
         setError('');
         const data = await getTransactions({ month, year });
-        console.log("Transações carregadas:", data);
         setTransactions(data);
       } catch (err: any) {
         console.error('Erro ao buscar transações:', err);
@@ -71,22 +48,19 @@ const Transactions = () => {
   const handleDelete = async (id: string) => {
     try {
       if (!id) {
-        console.error("Tentativa de excluir transação com ID undefined");
         toast.error("Erro: ID da transação não encontrado");
         return;
       }
       
-      console.log("Excluindo transação com ID:", id);
       setDeletingId(id);
       
       await deleteTransaction(id);
       
       // Atualizar a lista após exclusão
       setTransactions(prevTransactions => 
-        prevTransactions.filter(transaction => {
-          const transactionId = getTransactionId(transaction);
-          return transactionId !== id;
-        })
+        prevTransactions.filter(transaction => 
+          (transaction._id || transaction.id) !== id
+        )
       );
       
       toast.success('Transação excluída com sucesso');
@@ -100,7 +74,7 @@ const Transactions = () => {
 
   // Confirmação de exclusão
   const confirmDelete = (transaction: Transaction) => {
-    const id = getTransactionId(transaction);
+    const id = transaction._id || transaction.id;
     
     if (!id) {
       toast.error("Não foi possível excluir: ID não encontrado");
@@ -122,7 +96,7 @@ const Transactions = () => {
       };
     }
     
-    // Se categoryId for um ID mas temos category, usamos category
+    // Se temos category, usamos category
     if (transaction.category) {
       return {
         name: transaction.category.name || 'Sem nome',
@@ -130,7 +104,6 @@ const Transactions = () => {
       };
     }
     
-    // Se não temos nenhuma informação válida
     return {
       name: 'Categoria não encontrada',
       color: '#999999'
@@ -157,17 +130,15 @@ const Transactions = () => {
         />
       </div>
 
-      {/* Barra de busca simplificada */}
+      {/* Barra de busca */}
       <Card className="mb-6">
-        <div className="w-full">
-          <Input
-            placeholder="Buscar transação..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            icon={<Search className="w-4 h-4" />}
-            fullWidth
-          />
-        </div>
+        <Input
+          placeholder="Buscar transação..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          icon={<Search className="w-4 h-4" />}
+          fullWidth
+        />
       </Card>
 
       {/* Lista de transações */}
@@ -216,7 +187,7 @@ const Transactions = () => {
               </thead>
               <tbody className="divide-y divide-dark">
                 {filteredTransactions.map((transaction) => {
-                  const transactionId = getTransactionId(transaction);
+                  const transactionId = transaction._id || transaction.id;
                   const categoryInfo = getCategoryInfo(transaction);
                   
                   return (

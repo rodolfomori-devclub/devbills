@@ -16,26 +16,17 @@ const Button = ({
   disabled,
   ...rest
 }: ButtonProps) => {
-  const getVariantClass = () => {
-    switch (variant) {
-      case 'primary':
-        return 'btn-primary';
-      case 'outline':
-        return 'btn-outline';
-      case 'secondary':
-        return 'btn-secondary';
-      case 'success':
-        return 'btn-success';
-      case 'danger':
-        return 'btn-danger';
-      default:
-        return 'btn-primary';
-    }
-  };
+  const variantClass = {
+    primary: 'btn-primary',
+    outline: 'btn-outline',
+    secondary: 'btn-secondary',
+    success: 'btn-success',
+    danger: 'btn-danger',
+  }[variant] || 'btn-primary';
 
   return (
     <button
-      className={`btn ${getVariantClass()} ${fullWidth ? 'w-full' : ''} ${
+      className={`btn ${variantClass} ${fullWidth ? 'w-full' : ''} ${
         isLoading || disabled ? 'opacity-70 cursor-not-allowed' : ''
       } ${className}`}
       disabled={isLoading || disabled}

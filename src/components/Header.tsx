@@ -8,24 +8,12 @@ const Header = () => {
   const { pathname } = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // Verificar se o usuário está autenticado
   const isAuthenticated = !!authState.user;
-
-  // Links de navegação
+  
   const navLinks = [
     { name: 'Dashboard', path: '/dashboard' },
     { name: 'Transações', path: '/transactions' },
   ];
-
-  // Alternar menu móvel
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  // Fechar menu móvel
-  const closeMenu = () => {
-    setIsMenuOpen(false);
-  };
 
   return (
     <header className="bg-card border-b border-dark">
@@ -44,11 +32,7 @@ const Header = () => {
                 <Link
                   key={link.path}
                   to={link.path}
-                  className={`${
-                    pathname === link.path
-                      ? 'nav-link-active'
-                      : 'nav-link'
-                  }`}
+                  className={pathname === link.path ? 'nav-link-active' : 'nav-link'}
                 >
                   {link.name}
                 </Link>
@@ -88,10 +72,7 @@ const Header = () => {
                 </button>
               </div>
             ) : (
-              <Link
-                to="/login"
-                className="btn btn-primary"
-              >
+              <Link to="/login" className="btn btn-primary">
                 Entrar
               </Link>
             )}
@@ -101,7 +82,7 @@ const Header = () => {
           <div className="md:hidden flex items-center">
             <button
               className="text-muted p-2 rounded-lg hover:bg-lighter transition-colors"
-              onClick={toggleMenu}
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -126,7 +107,7 @@ const Header = () => {
                           ? 'bg-lighter text-primary font-medium'
                           : 'text-muted hover:bg-lighter hover:text-primary'
                       }`}
-                      onClick={closeMenu}
+                      onClick={() => setIsMenuOpen(false)}
                     >
                       {link.name}
                     </Link>
@@ -154,7 +135,7 @@ const Header = () => {
                   <button
                     onClick={() => {
                       signOut();
-                      closeMenu();
+                      setIsMenuOpen(false);
                     }}
                     className="text-muted hover:text-danger p-2 rounded-full hover:bg-opacity-10 hover:bg-red-500 transition-colors"
                   >
@@ -168,7 +149,7 @@ const Header = () => {
               <Link
                 to="/login"
                 className="btn btn-primary w-full"
-                onClick={closeMenu}
+                onClick={() => setIsMenuOpen(false)}
               >
                 Entrar
               </Link>

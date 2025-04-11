@@ -61,25 +61,10 @@ const Home = () => {
                 >
                   Começar Agora
                 </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    const featuresSection = document.getElementById('features');
-                    featuresSection?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                  className="text-center px-6 py-3"
-                >
-                  Saiba Mais
-                </Button>
               </div>
             </div>
             <div className="flex justify-center">
-              <img
-                src="/finance-illustration.svg"
-                alt="Ilustração de finanças"
-                className="max-w-full h-auto rounded-lg"
-                style={{ maxHeight: '400px' }}
-              />
+              {/* Aqui você pode adicionar uma imagem ilustrativa */}
             </div>
           </div>
         </section>
@@ -132,17 +117,6 @@ const Home = () => {
             <div className="mb-4 md:mb-0">
               <h3 className="text-xl font-bold text-primary">DevBills</h3>
               <p className="text-text-muted text-sm">© {new Date().getFullYear()} - Todos os direitos reservados</p>
-            </div>
-            <div className="flex space-x-4">
-              <a href="#" className="text-text-muted hover:text-primary">
-                Termos de Uso
-              </a>
-              <a href="#" className="text-text-muted hover:text-primary">
-                Privacidade
-              </a>
-              <a href="#" className="text-text-muted hover:text-primary">
-                Contato
-              </a>
             </div>
           </div>
         </footer>

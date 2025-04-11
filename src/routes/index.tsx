@@ -42,7 +42,6 @@ const AppRoutes = () => {
           <Route path="*" element={<Navigate to="/404" replace />} />
         </Routes>
         
-        {/* Configuração do Toast com tema adaptativo */}
         <ToastContainer 
           position="top-right" 
           autoClose={3000}

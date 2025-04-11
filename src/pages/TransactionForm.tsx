@@ -33,7 +33,6 @@ const TransactionForm = () => {
     const fetchCategories = async () => {
       try {
         setLoading(true);
-        setError(null);
         const categoriesData = await getCategories();
         setCategories(categoriesData);
       } catch (err) {
@@ -69,21 +68,13 @@ const TransactionForm = () => {
       // Validações básicas
       if (!formData.description || !formData.amount || !formData.date || !formData.categoryId) {
         setError('Todos os campos são obrigatórios');
-        setSubmitting(false);
         return;
       }
 
-      // Ajustar a data
-      const parts = formData.date.split('-');
-      const year = parseInt(parts[0]);
-      const month = parseInt(parts[1]) - 1;
-      const day = parseInt(parts[2]);
-      const transactionDate = new Date(year, month, day, 12, 0, 0);
-      
       const transactionData = {
         description: formData.description,
         amount: parseFloat(formData.amount),
-        date: transactionDate.toISOString(),
+        date: new Date(formData.date).toISOString(),
         categoryId: formData.categoryId,
         type: formData.type
       };
@@ -124,32 +115,30 @@ const TransactionForm = () => {
           )}
 
           <form onSubmit={handleSubmit}>
-            {/* Tipo de transação - INVERTENDO A LÓGICA COMPLETAMENTE */}
+            {/* Tipo de transação */}
             <div className="mb-4">
               <label className="label">Tipo de Transação</label>
               <div className="grid grid-cols-2 gap-4">
-                {/* Botão de Despesa - LÓGICA INVERTIDA */}
-                <button
-                  type="button"
-                  className={`btn flex items-center justify-center ${
-                    formData.type === 'income'
-                      ? 'bg-transparent border border-danger text-danger'
-                      : 'bg-danger text-white font-medium'
-                  }`}
-                  onClick={() => setFormData(prev => ({ ...prev, type: 'expense' }))}
-                >
-                  <span>Despesa</span>
-                </button>
-
-                {/* Botão de Receita - LÓGICA INVERTIDA */}
                 <button
                   type="button"
                   className={`btn flex items-center justify-center ${
                     formData.type === 'expense'
-                      ? 'bg-transparent border border-success text-success'
-                      : 'bg-success text-white font-medium'
+                      ? 'bg-danger text-white font-medium'
+                      : 'bg-transparent border border-danger text-danger'
                   }`}
-                  onClick={() => setFormData(prev => ({ ...prev, type: 'income' }))}
+                  onClick={() => setFormData(prev => ({ ...prev, type: 'expense', categoryId: '' }))}
+                >
+                  <span>Despesa</span>
+                </button>
+
+                <button
+                  type="button"
+                  className={`btn flex items-center justify-center ${
+                    formData.type === 'income'
+                      ? 'bg-success text-white font-medium'
+                      : 'bg-transparent border border-success text-success'
+                  }`}
+                  onClick={() => setFormData(prev => ({ ...prev, type: 'income', categoryId: '' }))}
                 >
                   <span>Receita</span>
                 </button>
