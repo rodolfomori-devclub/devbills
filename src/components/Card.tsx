@@ -29,12 +29,12 @@ const Card = ({
       {(title || icon) && (
         <div className="flex items-center space-x-3 mb-4">
           {icon && (
-            <div className="p-2 bg-opacity-10 bg-primary rounded-lg text-primary">
+            <div className="p-2 bg-primary bg-opacity-10 rounded-xl text-primary flex items-center justify-center">
               {icon}
             </div>
           )}
           <div>
-            {title && <h3 className="text-lg font-medium text-white">{title}</h3>}
+            {title && <h3 className="text-lg font-medium">{title}</h3>}
             {subtitle && <p className="text-sm text-muted">{subtitle}</p>}
           </div>
         </div>

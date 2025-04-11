@@ -27,17 +27,17 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
           <select
             ref={ref}
             className={`input ${icon ? 'pl-10' : ''} ${
-              error ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''
-            } ${className} bg-lighter text-white border-dark`}
+              error ? 'border-danger focus:border-danger focus:ring-danger' : ''
+            } ${className} bg-lighter appearance-none`}
             {...rest}
           >
             {options.map((option) => (
-              <option key={option.value} value={option.value} className="bg-lighter text-white">
+              <option key={option.value} value={option.value}>
                 {option.label}
               </option>
             ))}
           </select>
-          <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+          <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
             <svg
               className="h-5 w-5 text-muted"
               xmlns="http://www.w3.org/2000/svg"
@@ -53,7 +53,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
             </svg>
           </div>
         </div>
-        {error && <p className="mt-1 text-sm text-red-500">{error}</p>}
+        {error && <p className="mt-1 text-sm text-danger">{error}</p>}
       </div>
     );
   }

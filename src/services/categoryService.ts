@@ -3,24 +3,28 @@ import { Category, TransactionType } from '../types';
 
 // Buscar todas as categorias
 export const getCategories = async (type?: TransactionType): Promise<Category[]> => {
-  const params = type ? { type } : {};
-  const response = await api.get('/categories', { params });
-  return response.data;
-};
-
-// Criar uma nova categoria
-export const createCategory = async (categoryData: Omit<Category, '_id'>): Promise<Category> => {
-  const response = await api.post('/categories', categoryData);
-  return response.data;
-};
-
-// Atualizar uma categoria
-export const updateCategory = async (id: string, categoryData: Partial<Omit<Category, '_id' | 'type'>>): Promise<Category> => {
-  const response = await api.put(`/categories/${id}`, categoryData);
-  return response.data;
-};
-
-// Excluir uma categoria
-export const deleteCategory = async (id: string): Promise<void> => {
-  await api.delete(`/categories/${id}`);
+  try {
+    // Adicionar parâmetros de consulta se o tipo for fornecido
+    const params = type ? { type } : {};
+    
+    // Buscar categorias da API
+    const response = await api.get('/categories', { params });
+    
+    // Log para depuração
+    console.log('Categorias recebidas da API:', response.data);
+    
+    // Verificar e normalizar IDs se necessário (alguns backends usam _id, outros usam id)
+    const categories = response.data.map((category: any) => {
+      // Certifique-se de que a categoria tenha um campo '_id' (normalização)
+      if (!category._id && category.id) {
+        category._id = category.id;
+      }
+      return category;
+    });
+    
+    return categories;
+  } catch (error) {
+    console.error('Erro ao buscar categorias:', error);
+    throw error;
+  }
 };

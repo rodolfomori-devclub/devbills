@@ -14,7 +14,6 @@ import Login from '../pages/Login';
 import Dashboard from '../pages/Dashboard';
 import Transactions from '../pages/Transactions';
 import TransactionForm from '../pages/TransactionForm';
-import Categories from '../pages/Categories';
 import NotFound from '../pages/NotFound';
 
 // Routes
@@ -35,8 +34,6 @@ const AppRoutes = () => {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/transactions" element={<Transactions />} />
               <Route path="/transactions/new" element={<TransactionForm />} />
-              <Route path="/transactions/edit/:id" element={<TransactionForm />} />
-              <Route path="/categories" element={<Categories />} />
             </Route>
           </Route>
           
@@ -45,8 +42,19 @@ const AppRoutes = () => {
           <Route path="*" element={<Navigate to="/404" replace />} />
         </Routes>
         
-        {/* Notificações */}
-        <ToastContainer position="top-right" autoClose={3000} />
+        {/* Configuração do Toast com tema adaptativo */}
+        <ToastContainer 
+          position="top-right" 
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="colored"
+        />
       </AuthProvider>
     </BrowserRouter>
   );

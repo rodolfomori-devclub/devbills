@@ -15,7 +15,6 @@ const Header = () => {
   const navLinks = [
     { name: 'Dashboard', path: '/dashboard' },
     { name: 'Transações', path: '/transactions' },
-    { name: 'Categorias', path: '/categories' },
   ];
 
   // Alternar menu móvel
@@ -29,7 +28,7 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-lighter border-b border-dark">
+    <header className="bg-card border-b border-dark">
       <div className="container-app">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
@@ -40,7 +39,7 @@ const Header = () => {
 
           {/* Links de navegação para desktop */}
           {isAuthenticated && (
-            <nav className="hidden md:flex space-x-8">
+            <nav className="hidden md:flex space-x-4">
               {navLinks.map((link) => (
                 <Link
                   key={link.path}
@@ -70,11 +69,11 @@ const Header = () => {
                       className="w-8 h-8 rounded-full border border-dark"
                     />
                   ) : (
-                    <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-secondary-dark font-medium">
+                    <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-medium">
                       {authState.user?.displayName?.charAt(0) || 'U'}
                     </div>
                   )}
-                  <span className="text-sm font-medium text-white">
+                  <span className="text-sm font-medium">
                     {authState.user?.displayName || authState.user?.email}
                   </span>
                 </div>
@@ -99,12 +98,14 @@ const Header = () => {
           </div>
 
           {/* Botão de menu móvel */}
-          <button
-            className="md:hidden text-muted p-2 rounded-lg hover:bg-lighter transition-colors"
-            onClick={toggleMenu}
-          >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          <div className="md:hidden flex items-center">
+            <button
+              className="text-muted p-2 rounded-lg hover:bg-lighter transition-colors"
+              onClick={toggleMenu}
+            >
+              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -120,9 +121,9 @@ const Header = () => {
                     <Link
                       key={link.path}
                       to={link.path}
-                      className={`block px-2 py-2 rounded-md ${
+                      className={`block px-3 py-2 rounded-lg ${
                         pathname === link.path
-                          ? 'bg-opacity-10 bg-primary text-primary font-medium'
+                          ? 'bg-lighter text-primary font-medium'
                           : 'text-muted hover:bg-lighter hover:text-primary'
                       }`}
                       onClick={closeMenu}
@@ -142,11 +143,11 @@ const Header = () => {
                         className="w-8 h-8 rounded-full border border-dark"
                       />
                     ) : (
-                      <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-secondary-dark font-medium">
+                      <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-medium">
                         {authState.user?.displayName?.charAt(0) || 'U'}
                       </div>
                     )}
-                    <span className="text-sm font-medium text-white">
+                    <span className="text-sm font-medium">
                       {authState.user?.displayName || authState.user?.email}
                     </span>
                   </div>

@@ -1,87 +1,51 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Calendar, DollarSign, Tag, Save } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Calendar, DollarSign, Tag, Save, AlertCircle } from 'lucide-react';
+import { toast } from 'react-toastify';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import Select from '../components/Select';
 import Loading from '../components/Loading';
+import Card from '../components/Card';
 import { getCategories } from '../services/categoryService';
-import { getTransactions, createTransaction, updateTransaction } from '../services/transactionService';
-import { Category, Transaction, TransactionType } from '../types';
+import { createTransaction } from '../services/transactionService';
 
 const TransactionForm = () => {
   const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>();
-  const isEditing = !!id;
-
+  
   // Estado do formulário
   const [formData, setFormData] = useState({
     description: '',
     amount: '',
-    date: '',
+    date: new Date().toISOString().split('T')[0],
     categoryId: '',
-    type: TransactionType.EXPENSE,
+    type: 'expense',
   });
 
   // Estados de UI
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(null);
 
-  // Carregar categorias e transação (se estiver editando)
+  // Carregar categorias
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchCategories = async () => {
       try {
         setLoading(true);
         setError(null);
-
-        // Buscar categorias
         const categoriesData = await getCategories();
         setCategories(categoriesData);
-
-        // Se estiver editando, buscar a transação
-        if (isEditing && id) {
-          const transactions = await getTransactions();
-          const transaction = transactions.find(t => t._id === id);
-
-          if (transaction) {
-            // Formatar a data para o formato yyyy-MM-dd
-            const date = new Date(transaction.date);
-            const formattedDate = date.toISOString().split('T')[0];
-
-            setFormData({
-              description: transaction.description,
-              amount: transaction.amount.toString(),
-              date: formattedDate,
-              categoryId: typeof transaction.categoryId === 'string'
-                ? transaction.categoryId
-                : transaction.categoryId._id,
-              type: transaction.type,
-            });
-          } else {
-            setError('Transação não encontrada');
-          }
-        } else {
-          // Se estiver criando, inicializar com a data atual
-          const today = new Date().toISOString().split('T')[0];
-          setFormData(prev => ({ ...prev, date: today }));
-        }
-      } catch (err: any) {
-        console.error('Erro ao carregar dados:', err);
-        setError('Não foi possível carregar os dados. Tente novamente mais tarde.');
+      } catch (err) {
+        console.error('Erro ao carregar categorias:', err);
+        setError('Não foi possível carregar as categorias.');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
-  }, [id, isEditing]);
-
-  // Atualizar o formulário quando o tipo mudar para limpar a categoria
-  useEffect(() => {
-    setFormData(prev => ({ ...prev, categoryId: '' }));
-  }, [formData.type]);
+    fetchCategories();
+  }, []);
 
   // Filtrar categorias pelo tipo selecionado
   const filteredCategories = categories.filter(
@@ -89,43 +53,48 @@ const TransactionForm = () => {
   );
 
   // Handler de alteração de inputs
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   // Handler de envio do formulário
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     try {
       setSubmitting(true);
       setError(null);
 
-      // Validar formulário
+      // Validações básicas
       if (!formData.description || !formData.amount || !formData.date || !formData.categoryId) {
-        setError('Preencha todos os campos obrigatórios');
+        setError('Todos os campos são obrigatórios');
+        setSubmitting(false);
         return;
       }
 
-      // Preparar os dados
+      // Ajustar a data
+      const parts = formData.date.split('-');
+      const year = parseInt(parts[0]);
+      const month = parseInt(parts[1]) - 1;
+      const day = parseInt(parts[2]);
+      const transactionDate = new Date(year, month, day, 12, 0, 0);
+      
       const transactionData = {
-        ...formData,
+        description: formData.description,
         amount: parseFloat(formData.amount),
+        date: transactionDate.toISOString(),
+        categoryId: formData.categoryId,
+        type: formData.type
       };
 
-      // Criar ou atualizar a transação
-      if (isEditing && id) {
-        await updateTransaction(id, transactionData);
-      } else {
-        await createTransaction(transactionData);
-      }
-
-      // Navegar de volta para a lista de transações
+      await createTransaction(transactionData);
+      toast.success('Transação criada com sucesso!');
       navigate('/transactions');
-    } catch (err: any) {
+    } catch (err) {
       console.error('Erro ao salvar transação:', err);
-      setError('Não foi possível salvar a transação. Tente novamente mais tarde.');
+      setError('Não foi possível salvar a transação.');
+      toast.error('Erro ao criar transação');
     } finally {
       setSubmitting(false);
     }
@@ -144,45 +113,43 @@ const TransactionForm = () => {
   return (
     <div className="container-app py-8">
       <div className="max-w-2xl mx-auto">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">
-          {isEditing ? 'Editar Transação' : 'Nova Transação'}
-        </h1>
+        <h1 className="text-2xl font-bold mb-6">Nova Transação</h1>
 
-        {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-            <p className="text-red-700">{error}</p>
-          </div>
-        )}
+        <Card>
+          {error && (
+            <div className="bg-danger bg-opacity-10 border border-danger border-opacity-20 rounded-xl p-4 mb-6 flex items-start">
+              <AlertCircle className="w-5 h-5 text-danger mr-2 flex-shrink-0 mt-0.5" />
+              <p className="text-danger">{error}</p>
+            </div>
+          )}
 
-        <div className="bg-white rounded-lg shadow-sm p-6">
           <form onSubmit={handleSubmit}>
-            {/* Tipo de transação */}
+            {/* Tipo de transação - INVERTENDO A LÓGICA COMPLETAMENTE */}
             <div className="mb-4">
               <label className="label">Tipo de Transação</label>
               <div className="grid grid-cols-2 gap-4">
+                {/* Botão de Despesa - LÓGICA INVERTIDA */}
                 <button
                   type="button"
                   className={`btn flex items-center justify-center ${
-                    formData.type === TransactionType.EXPENSE
-                      ? 'bg-danger-500 text-white'
-                      : 'btn-outline'
+                    formData.type === 'income'
+                      ? 'bg-transparent border border-danger text-danger'
+                      : 'bg-danger text-white font-medium'
                   }`}
-                  onClick={() =>
-                    setFormData(prev => ({ ...prev, type: TransactionType.EXPENSE }))
-                  }
+                  onClick={() => setFormData(prev => ({ ...prev, type: 'expense' }))}
                 >
                   <span>Despesa</span>
                 </button>
+
+                {/* Botão de Receita - LÓGICA INVERTIDA */}
                 <button
                   type="button"
                   className={`btn flex items-center justify-center ${
-                    formData.type === TransactionType.INCOME
-                      ? 'bg-success-500 text-white'
-                      : 'btn-outline'
+                    formData.type === 'expense'
+                      ? 'bg-transparent border border-success text-success'
+                      : 'bg-success text-white font-medium'
                   }`}
-                  onClick={() =>
-                    setFormData(prev => ({ ...prev, type: TransactionType.INCOME }))
-                  }
+                  onClick={() => setFormData(prev => ({ ...prev, type: 'income' }))}
                 >
                   <span>Receita</span>
                 </button>
@@ -233,7 +200,7 @@ const TransactionForm = () => {
               options={[
                 { value: '', label: 'Selecione uma categoria' },
                 ...filteredCategories.map(category => ({
-                  value: category._id,
+                  value: category._id || category.id,
                   label: category.name,
                 })),
               ]}
@@ -253,15 +220,16 @@ const TransactionForm = () => {
               </Button>
               <Button
                 type="submit"
-                variant={formData.type === TransactionType.EXPENSE ? 'danger' : 'success'}
+                variant={formData.type === 'expense' ? 'danger' : 'success'}
                 isLoading={submitting}
+                disabled={submitting || filteredCategories.length === 0}
               >
                 <Save className="w-4 h-4 mr-2" />
                 {submitting ? 'Salvando...' : 'Salvar'}
               </Button>
             </div>
           </form>
-        </div>
+        </Card>
       </div>
     </div>
   );

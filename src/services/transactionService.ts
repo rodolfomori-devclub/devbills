@@ -17,17 +17,48 @@ export const getTransactionSummary = async (month: number, year: number): Promis
 
 // Criar uma nova transação
 export const createTransaction = async (transactionData: Omit<Transaction, '_id' | 'createdAt' | 'updatedAt'>): Promise<Transaction> => {
-  const response = await api.post('/transactions', transactionData);
-  return response.data;
-};
-
-// Atualizar uma transação
-export const updateTransaction = async (id: string, transactionData: Partial<Omit<Transaction, '_id' | 'createdAt' | 'updatedAt'>>): Promise<Transaction> => {
-  const response = await api.put(`/transactions/${id}`, transactionData);
-  return response.data;
+  try {
+    // Garantir que os dados estão formatados corretamente
+    // Especialmente importante para a data - garantir que é enviada corretamente
+    const formattedData = {
+      description: transactionData.description,
+      amount: Number(transactionData.amount),
+      date: transactionData.date, // Mantemos o ISO string recebido do componente
+      categoryId: transactionData.categoryId,
+      type: transactionData.type
+    };
+    
+    // Log para depuração
+    console.log('Enviando dados de transação:', formattedData);
+    
+    const response = await api.post('/transactions', formattedData);
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao criar transação:', error);
+    if (error.response && error.response.data && error.response.data.error) {
+      console.error('Mensagem de erro do servidor:', error.response.data.error);
+    }
+    throw error;
+  }
 };
 
 // Excluir uma transação
 export const deleteTransaction = async (id: string): Promise<void> => {
-  await api.delete(`/transactions/${id}`);
+  try {
+    // Validar se o ID existe
+    if (!id) {
+      throw new Error('ID da transação não fornecido');
+    }
+    
+    // Log para depuração
+    console.log(`Excluindo transação com ID: ${id}`);
+    
+    // Chamar a API para excluir a transação
+    await api.delete(`/transactions/${id}`);
+    
+    console.log(`Transação ${id} excluída com sucesso`);
+  } catch (error) {
+    console.error(`Erro ao excluir transação (ID: ${id}):`, error);
+    throw error;
+  }
 };
