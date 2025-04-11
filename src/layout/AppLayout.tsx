@@ -3,14 +3,14 @@ import Header from '../components/Header';
 
 const AppLayout = () => {
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-app">
       <Header />
-      <main className="flex-grow">
+      <main className="flex-grow py-6">
         <Outlet />
       </main>
-      <footer className="bg-white border-t border-gray-200 py-4">
+      <footer className="bg-lighter border-t border-dark py-4">
         <div className="container-app">
-          <p className="text-sm text-gray-500 text-center">
+          <p className="text-sm text-muted text-center">
             DevBills © {new Date().getFullYear()} - Desenvolvido com React, TypeScript e Tailwind CSS
           </p>
         </div>

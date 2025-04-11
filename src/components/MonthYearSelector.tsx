@@ -53,10 +53,10 @@ const MonthYearSelector = ({ month, year, onMonthChange, onYearChange }: MonthYe
   const years = Array.from({ length: 11 }, (_, i) => currentYear - 5 + i);
 
   return (
-    <div className="flex items-center justify-between bg-white rounded-lg shadow-sm p-3">
+    <div className="flex items-center justify-between bg-card rounded-lg p-3 border border-dark">
       <button
         onClick={goToPreviousMonth}
-        className="p-2 rounded-full hover:bg-gray-100 transition"
+        className="p-2 rounded-full hover:bg-lighter transition-colors text-muted hover:text-primary"
         aria-label="Mês anterior"
       >
         <ChevronLeft size={20} />
@@ -66,7 +66,7 @@ const MonthYearSelector = ({ month, year, onMonthChange, onYearChange }: MonthYe
         <select
           value={month}
           onChange={(e) => onMonthChange(Number(e.target.value))}
-          className="bg-gray-50 border border-gray-200 rounded-md py-1 px-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+          className="bg-lighter border border-dark rounded-md py-1 px-3 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
         >
           {monthNames.map((name, index) => (
             <option key={index} value={index + 1}>
@@ -78,7 +78,7 @@ const MonthYearSelector = ({ month, year, onMonthChange, onYearChange }: MonthYe
         <select
           value={year}
           onChange={(e) => onYearChange(Number(e.target.value))}
-          className="bg-gray-50 border border-gray-200 rounded-md py-1 px-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+          className="bg-lighter border border-dark rounded-md py-1 px-3 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
         >
           {years.map((y) => (
             <option key={y} value={y}>
@@ -90,7 +90,7 @@ const MonthYearSelector = ({ month, year, onMonthChange, onYearChange }: MonthYe
 
       <button
         onClick={goToNextMonth}
-        className="p-2 rounded-full hover:bg-gray-100 transition"
+        className="p-2 rounded-full hover:bg-lighter transition-colors text-muted hover:text-primary"
         aria-label="Próximo mês"
       >
         <ChevronRight size={20} />

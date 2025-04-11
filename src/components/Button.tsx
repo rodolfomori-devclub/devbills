@@ -2,7 +2,7 @@ import { ButtonHTMLAttributes, ReactNode } from 'react';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
-  variant?: 'primary' | 'outline' | 'success' | 'danger';
+  variant?: 'primary' | 'outline' | 'secondary' | 'success' | 'danger';
   fullWidth?: boolean;
   isLoading?: boolean;
 }
@@ -22,6 +22,8 @@ const Button = ({
         return 'btn-primary';
       case 'outline':
         return 'btn-outline';
+      case 'secondary':
+        return 'btn-secondary';
       case 'success':
         return 'btn-success';
       case 'danger':

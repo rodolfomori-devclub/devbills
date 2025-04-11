@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LogOut, Menu, X } from 'lucide-react';
+import { LogOut, Menu, X, Activity } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 const Header = () => {
@@ -29,11 +29,12 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-white shadow-sm">
+    <header className="bg-lighter border-b border-dark">
       <div className="container-app">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
-          <Link to="/" className="text-xl font-bold text-primary-500 flex items-center space-x-2">
+          <Link to="/" className="text-xl font-bold text-primary flex items-center space-x-2">
+            <Activity className="h-6 w-6" />
             <span>DevBills</span>
           </Link>
 
@@ -46,9 +47,9 @@ const Header = () => {
                   to={link.path}
                   className={`${
                     pathname === link.path
-                      ? 'text-primary-500 font-medium'
-                      : 'text-gray-600 hover:text-primary-500'
-                  } transition duration-200`}
+                      ? 'nav-link-active'
+                      : 'nav-link'
+                  }`}
                 >
                   {link.name}
                 </Link>
@@ -66,14 +67,14 @@ const Header = () => {
                     <img
                       src={authState.user.photoURL}
                       alt={authState.user.displayName || 'Usuário'}
-                      className="w-8 h-8 rounded-full"
+                      className="w-8 h-8 rounded-full border border-dark"
                     />
                   ) : (
-                    <div className="w-8 h-8 rounded-full bg-primary-500 flex items-center justify-center text-white">
+                    <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-secondary-dark font-medium">
                       {authState.user?.displayName?.charAt(0) || 'U'}
                     </div>
                   )}
-                  <span className="text-sm font-medium text-gray-700">
+                  <span className="text-sm font-medium text-white">
                     {authState.user?.displayName || authState.user?.email}
                   </span>
                 </div>
@@ -81,7 +82,7 @@ const Header = () => {
                 {/* Botão de logout */}
                 <button
                   onClick={signOut}
-                  className="text-gray-500 hover:text-red-500 p-2 rounded-full hover:bg-gray-100 transition"
+                  className="text-muted hover:text-danger p-2 rounded-full hover:bg-opacity-10 hover:bg-red-500 transition-colors"
                   title="Sair"
                 >
                   <LogOut size={20} />
@@ -99,7 +100,7 @@ const Header = () => {
 
           {/* Botão de menu móvel */}
           <button
-            className="md:hidden text-gray-500 p-2 rounded-lg hover:bg-gray-100 transition"
+            className="md:hidden text-muted p-2 rounded-lg hover:bg-lighter transition-colors"
             onClick={toggleMenu}
           >
             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -110,19 +111,19 @@ const Header = () => {
       {/* Menu móvel */}
       {isMenuOpen && (
         <div className="md:hidden">
-          <div className="container-app py-4 space-y-3 border-t">
+          <div className="container-app py-4 space-y-3 border-t border-dark">
             {isAuthenticated && (
               <>
                 {/* Links de navegação */}
-                <nav className="space-y-3">
+                <nav className="space-y-1">
                   {navLinks.map((link) => (
                     <Link
                       key={link.path}
                       to={link.path}
                       className={`block px-2 py-2 rounded-md ${
                         pathname === link.path
-                          ? 'bg-primary-50 text-primary-500 font-medium'
-                          : 'text-gray-600 hover:bg-gray-50'
+                          ? 'bg-opacity-10 bg-primary text-primary font-medium'
+                          : 'text-muted hover:bg-lighter hover:text-primary'
                       }`}
                       onClick={closeMenu}
                     >
@@ -132,20 +133,20 @@ const Header = () => {
                 </nav>
 
                 {/* Informações do usuário */}
-                <div className="flex items-center justify-between pt-3 border-t">
+                <div className="flex items-center justify-between pt-3 border-t border-dark">
                   <div className="flex items-center space-x-2">
                     {authState.user?.photoURL ? (
                       <img
                         src={authState.user.photoURL}
                         alt={authState.user.displayName || 'Usuário'}
-                        className="w-8 h-8 rounded-full"
+                        className="w-8 h-8 rounded-full border border-dark"
                       />
                     ) : (
-                      <div className="w-8 h-8 rounded-full bg-primary-500 flex items-center justify-center text-white">
+                      <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-secondary-dark font-medium">
                         {authState.user?.displayName?.charAt(0) || 'U'}
                       </div>
                     )}
-                    <span className="text-sm font-medium text-gray-700">
+                    <span className="text-sm font-medium text-white">
                       {authState.user?.displayName || authState.user?.email}
                     </span>
                   </div>
@@ -154,7 +155,7 @@ const Header = () => {
                       signOut();
                       closeMenu();
                     }}
-                    className="text-gray-500 hover:text-red-500 p-2 rounded-full hover:bg-gray-100 transition"
+                    className="text-muted hover:text-danger p-2 rounded-full hover:bg-opacity-10 hover:bg-red-500 transition-colors"
                   >
                     <LogOut size={20} />
                   </button>

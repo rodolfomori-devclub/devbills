@@ -20,7 +20,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
         {label && <label className="label">{label}</label>}
         <div className="relative">
           {icon && (
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted">
               {icon}
             </div>
           )}
@@ -28,18 +28,18 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
             ref={ref}
             className={`input ${icon ? 'pl-10' : ''} ${
               error ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''
-            } ${className}`}
+            } ${className} bg-lighter text-white border-dark`}
             {...rest}
           >
             {options.map((option) => (
-              <option key={option.value} value={option.value}>
+              <option key={option.value} value={option.value} className="bg-lighter text-white">
                 {option.label}
               </option>
             ))}
           </select>
           <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
             <svg
-              className="h-5 w-5 text-gray-400"
+              className="h-5 w-5 text-muted"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
               fill="currentColor"

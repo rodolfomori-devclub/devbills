@@ -7,36 +7,70 @@ export default {
   theme: {
     extend: {
       colors: {
-        gray: {
-          50: '#F9FAFB',
-          100: '#F3F4F6',
-          200: '#E5E7EB',
-          300: '#D1D5DB',
-          400: '#9CA3AF',
-          500: '#6B7280',
-          600: '#4B5563',
-          700: '#374151',
-          800: '#1F2937',
-          900: '#111827',
-          950: '#030712',
-        },
+        // Cores principais
         primary: {
-          500: '#2563EB', // blue-600
-          600: '#1D4ED8', // blue-700
-          700: '#1E40AF', // blue-800
+          DEFAULT: '#37E359', // Verde DevClub
+          dark: '#2BC348',
+          light: '#52FF74',
+        },
+        secondary: {
+          DEFAULT: '#051626', // Azul escuro DevClub
+          dark: '#020A13',
+          light: '#0A2E4D',
+        },
+        // Cores de fundo
+        background: {
+          DEFAULT: '#121212',
+          lighter: '#1E1E1E',
+          card: '#1A1A1A',
+        },
+        // Cores de texto
+        text: {
+          DEFAULT: '#F8F9FA',
+          muted: '#94A3B8',
+          highlight: '#FFFFFF',
+        },
+        // Cores de elementos
+        border: {
+          DEFAULT: '#2A2A2A',
+          light: '#333333',
         },
         success: {
-          500: '#10B981', // emerald-500
+          DEFAULT: '#10B981',
+          dark: '#059669',
         },
         danger: {
-          500: '#EF4444', // red-500
+          DEFAULT: '#EF4444',
+          dark: '#DC2626',
         },
         warning: {
-          500: '#F59E0B', // amber-500
+          DEFAULT: '#F59E0B',
+          dark: '#D97706',
         },
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
+        mono: ['Fira Code', 'monospace'],
+      },
+      boxShadow: {
+        'neon': '0 0 5px theme(colors.primary.DEFAULT), 0 0 20px theme(colors.primary.DEFAULT)',
+        'neon-sm': '0 0 3px theme(colors.primary.DEFAULT)',
+        'card': '0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06)',
+      },
+      animation: {
+        'float': 'float 6s ease-in-out infinite',
+        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'glow': 'glow 2s ease-in-out infinite alternate',
+      },
+      keyframes: {
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-10px)' },
+        },
+        glow: {
+          '0%': { boxShadow: '0 0 5px rgba(55, 227, 89, 0.5)' },
+          '100%': { boxShadow: '0 0 20px rgba(55, 227, 89, 0.9), 0 0 30px rgba(55, 227, 89, 0.3)' },
+        },
       },
     },
   },

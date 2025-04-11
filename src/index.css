@@ -1,13 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&display=swap');
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 /* Estilos base com sintaxe básica */
 body {
-  background-color: #f9fafb;
-  color: #111827;
+  background-color: #121212;
+  color: #F8F9FA;
   min-height: 100vh;
   font-family: 'Inter', sans-serif;
 }
@@ -27,67 +26,190 @@ body {
   border-radius: 0.375rem;
   font-weight: 500;
   transition-duration: 200ms;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn-primary {
-  background-color: #2563eb;
-  color: white;
+  background-color: #37E359;
+  color: #051626;
+  font-weight: 600;
 }
 .btn-primary:hover {
-  background-color: #1d4ed8;
+  background-color: #2BC348;
 }
 
 .btn-outline {
-  border: 1px solid #d1d5db;
-  background-color: white;
-  color: #374151;
+  border: 1px solid #37E359;
+  background-color: transparent;
+  color: #37E359;
 }
 .btn-outline:hover {
-  background-color: #f3f4f6;
+  background-color: rgba(55, 227, 89, 0.1);
+}
+
+.btn-secondary {
+  background-color: #051626;
+  color: #F8F9FA;
+}
+.btn-secondary:hover {
+  background-color: #0A2E4D;
 }
 
 .btn-success {
-  background-color: #10b981;
-  color: white;
+  background-color: #10B981;
+  color: #F8F9FA;
 }
 .btn-success:hover {
   background-color: #059669;
 }
 
 .btn-danger {
-  background-color: #ef4444;
-  color: white;
+  background-color: #EF4444;
+  color: #F8F9FA;
 }
 .btn-danger:hover {
-  background-color: #dc2626;
+  background-color: #DC2626;
 }
 
 .card {
-  background-color: white;
+  background-color: #1A1A1A;
   border-radius: 0.5rem;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  border: 1px solid #2A2A2A;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
   padding: 1.5rem;
+}
+
+.card-hover {
+  transition: all 300ms;
+}
+.card-hover:hover {
+  border-color: rgba(55, 227, 89, 0.5);
+  box-shadow: 0 0 3px #37E359;
 }
 
 .input {
   display: block;
   width: 100%;
   border-radius: 0.375rem;
-  border: 1px solid #d1d5db;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  padding: 0.5rem;
+  border: 1px solid #2A2A2A;
+  background-color: #1E1E1E;
+  padding: 0.625rem;
   font-size: 0.875rem;
+  color: #F8F9FA;
+  transition: colors 200ms;
 }
 .input:focus {
-  border-color: #2563eb;
+  border-color: #37E359;
   outline: none;
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+  box-shadow: 0 0 0 2px rgba(55, 227, 89, 0.2);
 }
 
 .label {
   display: block;
   font-size: 0.875rem;
   font-weight: 500;
-  color: #374151;
-  margin-bottom: 0.25rem;
+  color: #F8F9FA;
+  margin-bottom: 0.375rem;
+}
+
+/* Navegação */
+.nav-link {
+  color: #94A3B8;
+  transition: color 200ms;
+}
+.nav-link:hover {
+  color: #37E359;
+}
+
+.nav-link-active {
+  color: #37E359;
+  font-weight: 500;
+}
+
+/* Elementos específicos */
+.bg-app {
+  background-color: #121212;
+}
+
+.bg-card {
+  background-color: #1A1A1A;
+}
+
+.bg-lighter {
+  background-color: #1E1E1E;
+}
+
+.bg-primary {
+  background-color: #37E359;
+}
+
+.text-primary {
+  color: #37E359;
+}
+
+.text-muted {
+  color: #94A3B8;
+}
+
+.border-dark {
+  border-color: #2A2A2A;
+}
+
+.border-primary {
+  border-color: #37E359;
+}
+
+/* Efeitos */
+.glow {
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  0% {
+    box-shadow: 0 0 5px rgba(55, 227, 89, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 20px rgba(55, 227, 89, 0.9), 0 0 30px rgba(55, 227, 89, 0.3);
+  }
+}
+
+/* Sobrescrevendo classes Tailwind para garantir tema escuro consistente */
+.bg-white, .bg-gray-50, .bg-gray-100 {
+  background-color: #1A1A1A !important;
+}
+
+.bg-gray-200 {
+  background-color: #2A2A2A !important;
+}
+
+.text-gray-500, .text-gray-600, .text-gray-700, .text-gray-800, .text-gray-900 {
+  color: #94A3B8 !important;
+}
+
+.text-black, .text-gray-800, .text-gray-900 {
+  color: #F8F9FA !important;
+}
+
+.border-gray-200, .border-gray-300 {
+  border-color: #2A2A2A !important;
+}
+
+.shadow-sm, .shadow, .shadow-md, .shadow-lg {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Ajustes para garantir boa legibilidade */
+table th {
+  color: #94A3B8 !important;
+  background-color: #1E1E1E !important;
+}
+
+table td {
+  color: #F8F9FA !important;
+}
+
+table tr:hover {
+  background-color: #202020 !important;
 }
