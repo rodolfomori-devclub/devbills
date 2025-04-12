@@ -14,7 +14,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         {label && <label className="label">{label}</label>}
         <div className="relative">
           {icon && (
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted">
+            <div className="absolute inset-y-0 left-0 pl-1 flex items-center pointer-events-none text-muted">
               {icon}
             </div>
           )}
@@ -24,6 +24,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
               error ? 'border-danger focus:border-danger focus:ring-danger' : ''
             } ${className}`}
             {...rest}
+            style={icon ? { textIndent: '8px' } : undefined}
           />
         </div>
         {error && <p className="mt-1 text-sm text-danger">{error}</p>}

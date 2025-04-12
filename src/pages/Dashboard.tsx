@@ -132,17 +132,30 @@ const Dashboard = () => {
 
       {/* Cards resumo */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <Card icon={<Wallet size={20} />} title="Saldo" hoverable glowEffect={summary.balance > 0}>
+        <Card
+          icon={<Wallet size={20} className="text-primary" />}
+          title="Saldo"
+          hoverable
+          glowEffect={summary.balance > 0}
+        >
           <p className={`text-2xl font-semibold mt-2 ${summary.balance >= 0 ? 'text-primary' : 'text-red-500'}`}>
             {formatCurrency(summary.balance)}
           </p>
         </Card>
-        <Card icon={<ArrowUp size={20} />} title="Receitas" hoverable>
+        <Card
+          icon={<ArrowUp size={20} className="text-primary" />}
+          title="Receitas"
+          hoverable
+        >
           <p className="text-2xl font-semibold text-primary mt-2">
             {formatCurrency(summary.totalIncomes)}
           </p>
         </Card>
-        <Card icon={<ArrowDown size={20} />} title="Despesas" hoverable>
+        <Card
+          icon={<ArrowDown size={20} className="text-primary" />}
+          title="Despesas"
+          hoverable
+        >
           <p className="text-2xl font-semibold text-red-500 mt-2">
             {formatCurrency(summary.totalExpenses)}
           </p>
@@ -187,7 +200,9 @@ const Dashboard = () => {
         </Card>
 
         {/* Gráfico de barras - histórico mensal */}
-        <Card icon={<Calendar size={20} />} title="Histórico Mensal" className="min-h-80">
+        <Card icon={<Calendar size={20} className="text-primary" />}
+          title="Histórico Mensal"
+          className="min-h-80">
           <div className="h-64 mt-4">
             {monthlyData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
