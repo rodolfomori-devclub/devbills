@@ -1,20 +1,20 @@
-import axios from 'axios';
-import { auth } from '../config/firebase';
+import axios, { InternalAxiosRequestConfig } from 'axios';
+import { firebaseAuth } from '../config/firebase';
 
-// Criar uma instância do axios com URL base
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
 });
 
-// Interceptador para adicionar o token de autenticação a todas as requisições
-api.interceptors.request.use(async (config) => {
-  const user = auth.currentUser;
-  
+api.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
+  const user = firebaseAuth.currentUser;
+
   if (user) {
     const token = await user.getIdToken();
-    config.headers.Authorization = `Bearer ${token}`;
+
+    // ✅ Método oficial e seguro para adicionar o header
+    config.headers.set('Authorization', `Bearer ${token}`);
   }
-  
+
   return config;
 });
 

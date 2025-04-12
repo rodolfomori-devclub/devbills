@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes as RouterSwitch, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -14,7 +14,6 @@ import Login from '../pages/Login';
 import Dashboard from '../pages/Dashboard';
 import Transactions from '../pages/Transactions';
 import TransactionForm from '../pages/TransactionForm';
-import NotFound from '../pages/NotFound';
 
 // Routes
 import PrivateRoute from './PrivateRoute';
@@ -23,11 +22,11 @@ const AppRoutes = () => {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <Routes>
+        <RouterSwitch>
           {/* Rotas públicas */}
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
-          
+
           {/* Rotas protegidas */}
           <Route element={<PrivateRoute />}>
             <Route element={<AppLayout />}>
@@ -36,19 +35,18 @@ const AppRoutes = () => {
               <Route path="/transactions/new" element={<TransactionForm />} />
             </Route>
           </Route>
-          
-          {/* Rota de fallback */}
-          <Route path="/404" element={<NotFound />} />
-          <Route path="*" element={<Navigate to="/404" replace />} />
-        </Routes>
-        
-        <ToastContainer 
-          position="top-right" 
+
+          {/* Rota 404 */}
+          <Route path="*" element={<h1 className="text-center text-white">Página não encontrada</h1>} />
+        </RouterSwitch>
+
+        {/* Toast notifications */}
+        <ToastContainer
+          position="top-right"
           autoClose={3000}
           hideProgressBar={false}
           newestOnTop
           closeOnClick
-          rtl={false}
           pauseOnFocusLoss
           draggable
           pauseOnHover

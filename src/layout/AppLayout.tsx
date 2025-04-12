@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import Header from '../components/Header';
+import Footer from '../components/Footer'; // novo componente separado
 
 const AppLayout = () => {
   return (
@@ -8,13 +9,7 @@ const AppLayout = () => {
       <main className="flex-grow py-6">
         <Outlet />
       </main>
-      <footer className="bg-lighter border-t border-dark py-4">
-        <div className="container-app">
-          <p className="text-sm text-muted text-center">
-            DevBills © {new Date().getFullYear()} - Desenvolvido com React, TypeScript e Tailwind CSS
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };

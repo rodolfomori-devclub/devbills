@@ -5,17 +5,17 @@ import Loading from '../components/Loading';
 const PrivateRoute = () => {
   const { authState } = useAuth();
 
-  // Mostrar loading enquanto verifica a autenticação
+  // 🔄 Enquanto o estado de autenticação está carregando...
   if (authState.loading) {
     return <Loading fullScreen text="Verificando autenticação..." />;
   }
 
-  // Redirecionar para login se não estiver autenticado
+  // 🚫 Se o usuário NÃO estiver autenticado, redirecionar para o login
   if (!authState.user) {
     return <Navigate to="/login" replace />;
   }
 
-  // Renderizar as rotas filhas se estiver autenticado
+  // ✅ Se estiver autenticado, renderizar as rotas filhas
   return <Outlet />;
 };
 

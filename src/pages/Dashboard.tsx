@@ -1,31 +1,53 @@
 import { useState, useEffect } from 'react';
-import { ArrowUp, ArrowDown, Wallet, TrendingUp, Calendar } from 'lucide-react';
-import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
+import {
+  ArrowUp,
+  ArrowDown,
+  Wallet,
+  TrendingUp,
+  Calendar
+} from 'lucide-react';
+import {
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  CartesianGrid
+} from 'recharts';
+
 import Card from '../components/Card';
 import MonthYearSelector from '../components/MonthYearSelector';
+import Loading from '../components/Loading';
+
 import { getTransactionSummary, getTransactions } from '../services/transactionService';
 import { formatCurrency } from '../utils/formatters';
-import Loading from '../components/Loading';
+import { GRAPH_COLORS } from '../utils/colors';
+
+import { Summary, MonthlyItem } from '../types';
 import dayjs from 'dayjs';
 
 const Dashboard = () => {
   const [month, setMonth] = useState(new Date().getMonth() + 1);
   const [year, setYear] = useState(new Date().getFullYear());
-  const [summary, setSummary] = useState({
+
+  const [summary, setSummary] = useState<Summary>({
     totalIncomes: 0,
     totalExpenses: 0,
     balance: 0,
     expensesByCategory: []
   });
-  const [monthlyData, setMonthlyData] = useState([]);
+
+  const [monthlyData, setMonthlyData] = useState<MonthlyItem[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Cores para o gráfico de pizza
-  const COLORS = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'];
-
-  // Buscar dados do resumo do mês atual
+  // Carregar resumo mensal
   useEffect(() => {
-    const fetchSummary = async () => {
+    const loadMonthlySummary = async () => {
       try {
         setLoading(true);
         const data = await getTransactionSummary(month, year);
@@ -37,32 +59,28 @@ const Dashboard = () => {
       }
     };
 
-    fetchSummary();
+    loadMonthlySummary();
   }, [month, year]);
 
-  // Buscar dados históricos
+  // Carregar histórico dos últimos 6 meses
   useEffect(() => {
-    const fetchHistoricalData = async () => {
+    const loadHistoricalTransactions = async () => {
       try {
         const currentDate = new Date(year, month - 1, 1);
-        const data = [];
-        
-        // Buscar dados dos últimos 6 meses
+        const data: MonthlyItem[] = [];
+
         for (let i = 0; i < 6; i++) {
           const date = new Date(currentDate);
           date.setMonth(date.getMonth() - i);
-          
+
           const monthNum = date.getMonth() + 1;
           const yearNum = date.getFullYear();
-          
-          const transactions = await getTransactions({ 
-            month: monthNum, 
-            year: yearNum 
-          });
-          
+
+          const transactions = await getTransactions({ month: monthNum, year: yearNum });
+
           let monthlyExpenses = 0;
           let monthlyIncome = 0;
-          
+
           transactions.forEach(transaction => {
             if (transaction.type === 'expense') {
               monthlyExpenses += transaction.amount;
@@ -70,27 +88,26 @@ const Dashboard = () => {
               monthlyIncome += transaction.amount;
             }
           });
-          
+
           const monthName = dayjs().month(date.getMonth()).format('MMM');
-          
+
           data.unshift({
             name: `${monthName}/${yearNum}`,
             expenses: monthlyExpenses,
             income: monthlyIncome
           });
         }
-        
+
         setMonthlyData(data);
       } catch (err) {
         console.error('Erro ao buscar dados históricos:', err);
       }
     };
 
-    fetchHistoricalData();
+    loadHistoricalTransactions();
   }, [month, year]);
 
-  // Formatador para o tooltip
-  const formatTooltipValue = (value) => formatCurrency(value);
+  const formatTooltipValue = (value: number) => formatCurrency(value);
 
   if (loading) {
     return (
@@ -105,7 +122,6 @@ const Dashboard = () => {
     <div className="container-app py-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
         <h1 className="text-2xl font-bold mb-4 md:mb-0">Dashboard</h1>
-        
         <MonthYearSelector
           month={month}
           year={year}
@@ -113,40 +129,20 @@ const Dashboard = () => {
           onYearChange={setYear}
         />
       </div>
-      
-      {/* Cards de resumo */}
+
+      {/* Cards resumo */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        {/* Card de saldo */}
-        <Card 
-          icon={<Wallet size={20} />} 
-          title="Saldo"
-          hoverable
-          glowEffect={summary.balance > 0}
-        >
-          <p className={`text-2xl font-semibold mt-2 ${
-            summary.balance >= 0 ? 'text-primary' : 'text-red-500'
-          }`}>
+        <Card icon={<Wallet size={20} />} title="Saldo" hoverable glowEffect={summary.balance > 0}>
+          <p className={`text-2xl font-semibold mt-2 ${summary.balance >= 0 ? 'text-primary' : 'text-red-500'}`}>
             {formatCurrency(summary.balance)}
           </p>
         </Card>
-
-        {/* Card de receitas */}
-        <Card 
-          icon={<ArrowUp size={20} />} 
-          title="Receitas"
-          hoverable
-        >
+        <Card icon={<ArrowUp size={20} />} title="Receitas" hoverable>
           <p className="text-2xl font-semibold text-primary mt-2">
             {formatCurrency(summary.totalIncomes)}
           </p>
         </Card>
-
-        {/* Card de despesas */}
-        <Card 
-          icon={<ArrowDown size={20} />} 
-          title="Despesas"
-          hoverable
-        >
+        <Card icon={<ArrowDown size={20} />} title="Despesas" hoverable>
           <p className="text-2xl font-semibold text-red-500 mt-2">
             {formatCurrency(summary.totalExpenses)}
           </p>
@@ -155,13 +151,9 @@ const Dashboard = () => {
 
       {/* Gráficos */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        {/* Gráfico de despesas por categoria */}
-        <Card 
-          icon={<TrendingUp size={20} />} 
-          title="Despesas por Categoria"
-          className="min-h-80"
-        >
-          {summary.expensesByCategory && summary.expensesByCategory.length > 0 ? (
+        {/* Gráfico de pizza - despesas por categoria */}
+        <Card icon={<TrendingUp size={20} />} title="Despesas por Categoria" className="min-h-80">
+          {summary.expensesByCategory.length > 0 ? (
             <div className="h-64 mt-4">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -169,18 +161,20 @@ const Dashboard = () => {
                     data={summary.expensesByCategory}
                     cx="50%"
                     cy="50%"
-                    labelLine={true}
+                    labelLine
                     outerRadius={80}
-                    fill="#8884d8"
                     dataKey="amount"
                     nameKey="categoryName"
-                    label={({ categoryName, percent }) => `${categoryName}: ${(percent * 100).toFixed(0)}%`}
+                    label={({ categoryName, percent }) => `${categoryName}: ${(percent * 100).toFixed(1)}%`}
                   >
                     {summary.expensesByCategory.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.categoryColor || COLORS[index % COLORS.length]} />
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={entry.categoryColor || GRAPH_COLORS[index % GRAPH_COLORS.length]}
+                      />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(value) => formatCurrency(value)} />
+                  <Tooltip formatter={formatTooltipValue} />
                   <Legend />
                 </PieChart>
               </ResponsiveContainer>
@@ -192,12 +186,8 @@ const Dashboard = () => {
           )}
         </Card>
 
-        {/* Gráfico de histórico financeiro mensal */}
-        <Card 
-          icon={<Calendar size={20} />} 
-          title="Histórico Mensal"
-          className="min-h-80"
-        >
+        {/* Gráfico de barras - histórico mensal */}
+        <Card icon={<Calendar size={20} />} title="Histórico Mensal" className="min-h-80">
           <div className="h-64 mt-4">
             {monthlyData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
@@ -205,7 +195,7 @@ const Dashboard = () => {
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
                   <XAxis dataKey="name" stroke="#94A3B8" />
                   <YAxis stroke="#94A3B8" />
-                  <Tooltip 
+                  <Tooltip
                     formatter={formatTooltipValue}
                     contentStyle={{ backgroundColor: '#1A1A1A', borderColor: '#2A2A2A' }}
                     labelStyle={{ color: '#F8F9FA' }}
