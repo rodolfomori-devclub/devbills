@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from "react";
 
 interface CardProps {
   children: ReactNode;
@@ -10,22 +10,24 @@ interface CardProps {
   className?: string;
 }
 
-const Card = ({ 
-  children, 
-  title, 
-  subtitle, 
-  icon, 
+const Card = ({
+  children,
+  title,
+  subtitle,
+  icon,
   hoverable = false,
   glowEffect = false,
-  className = '' 
+  className = "",
 }: CardProps) => {
   return (
-    <div className={`
+    <div
+      className={`
       card 
-      ${hoverable ? 'card-hover' : ''} 
-      ${glowEffect ? 'glow' : ''}
+      ${hoverable ? "card-hover" : ""} 
+      ${glowEffect ? "glow" : ""}
       ${className}
-    `}>
+    `}
+    >
       {(title || icon) && (
         <div className="flex items-center space-x-3 mb-4">
           {icon && (

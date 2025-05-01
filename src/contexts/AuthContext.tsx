@@ -3,7 +3,7 @@ import {
   useState,
   useEffect,
   useContext,
-  ReactNode,
+  type ReactNode,
 } from 'react';
 import {
   signInWithPopup,
@@ -11,8 +11,7 @@ import {
   onAuthStateChanged,
 } from 'firebase/auth';
 import { firebaseAuth, googleAuthProvider } from '../config/firebase';
-import { AuthState } from '../types';
-import api from '../services/api';
+import type { AuthState } from '../types';
 
 // Tipagem do contexto de autenticação
 interface AuthContextProps {
@@ -51,7 +50,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             loading: false,
             error: null,
           });
-          initializeUserOnBackend();
+          // Removida a chamada para /users/initialize
         } else {
           // Usuário não autenticado
           setAuthState({ user: null, loading: false, error: null });
@@ -70,23 +69,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     return () => unsubscribe();
   }, []);
 
-  // Inicializar usuário na API backend
-  const initializeUserOnBackend = async () => {
-    try {
-      await api.post('/users/initialize');
-    } catch (error) {
-      console.error('Erro ao inicializar usuário no backend:', error);
-    }
-  };
-
   // Login com Google
   const signInWithGoogle = async () => {
     try {
       setAuthState((prev) => ({ ...prev, loading: true, error: null }));
       await signInWithPopup(firebaseAuth, googleAuthProvider);
     } catch (error: unknown) {
-      console.error('Erro ao autenticar com Google:', error);
-
       const message =
         error instanceof Error ? error.message : 'Erro ao autenticar com o Google';
 

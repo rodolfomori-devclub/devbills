@@ -27,24 +27,7 @@ export const formatDate = (date: Date | string): string => {
  */
 export const parseNumberInput = (value: string): number => {
   const cleanedValue = value.replace(/[^\d.]/g, '');
-  return parseFloat(cleanedValue) || 0;
+  return Number.parseFloat(cleanedValue) || 0;
 };
 
-/**
- * Gera uma cor aleatória em formato hexadecimal
- * @returns String com cor hexadecimal (ex: #3a4f9c)
- */
-export const generateRandomColor = (): string => {
-  return `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`;
-};
-
-/**
- * Limita o tamanho de um texto e adiciona reticências (...)
- * @param text Texto original
- * @param maxLength Número máximo de caracteres
- * @returns Texto cortado com "..." no final, se necessário
- */
-export const truncateText = (text: string, maxLength: number): string => {
-  if (text.length <= maxLength) return text;
-  return `${text.slice(0, maxLength)}...`;
-};
+// As funções truncateText e generateRandomColor foram removidas pois não eram utilizadas

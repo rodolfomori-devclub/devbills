@@ -1,5 +1,5 @@
 // src/components/GoogleLoginButton.tsx
-import Button from './Button';
+import Button from "./Button";
 
 interface GoogleLoginButtonProps {
   onClick: () => void;
@@ -7,12 +7,13 @@ interface GoogleLoginButtonProps {
 }
 
 const GoogleLoginButton = ({ onClick, isLoading }: GoogleLoginButtonProps) => (
-  <Button onClick={onClick} fullWidth isLoading={isLoading} className="flex items-center justify-center">
-    <svg
-      className="h-5 w-5 mr-2"
-      aria-hidden="true"
-      viewBox="0 0 24 24"
-    >
+  <Button
+    onClick={onClick}
+    fullWidth
+    isLoading={isLoading}
+    className="flex items-center justify-center"
+  >
+    <svg className="h-5 w-5 mr-2" aria-hidden="true" viewBox="0 0 24 24">
       <path
         d="M12.0003 4.75C13.7703 4.75 15.3553 5.36 16.6053 6.45L20.0303 3.02C17.9502 1.15 15.2353 0 12.0003 0C7.31031 0 3.25531 2.69 1.28931 6.61L5.27031 9.7C6.21531 6.86 8.87031 4.75 12.0003 4.75Z"
         fill="#EA4335"
@@ -29,7 +30,8 @@ const GoogleLoginButton = ({ onClick, isLoading }: GoogleLoginButtonProps) => (
         d="M12.0004 24C15.2404 24 17.9654 22.94 19.9354 21.19L16.0704 18.1C15.0004 18.81 13.6204 19.25 12.0004 19.25C8.8704 19.25 6.2154 17.14 5.2704 14.3L1.2894 17.39C3.2554 21.31 7.3104 24 12.0004 24Z"
         fill="#34A853"
       />
-    </svg>    Entrar com Google
+    </svg>{" "}
+    Entrar com Google
   </Button>
 );
 
