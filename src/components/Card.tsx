@@ -1,5 +1,7 @@
+// src/components/Card.tsx
 import type { ReactNode } from "react";
 
+// Tipagem das props que o componente Card aceita
 interface CardProps {
   children: ReactNode;
   title?: string;
@@ -19,15 +21,13 @@ const Card = ({
   glowEffect = false,
   className = "",
 }: CardProps) => {
+  // Classes dinâmicas para aplicar efeitos visuais
+  const cardClasses = ["card", hoverable && "card-hover", glowEffect && "glow", className]
+    .filter(Boolean)
+    .join(" ");
+
   return (
-    <div
-      className={`
-      card 
-      ${hoverable ? "card-hover" : ""} 
-      ${glowEffect ? "glow" : ""}
-      ${className}
-    `}
-    >
+    <div className={cardClasses}>
       {(title || icon) && (
         <div className="flex items-center space-x-3 mb-4">
           {icon && (
@@ -41,6 +41,8 @@ const Card = ({
           </div>
         </div>
       )}
+
+      {/* Conteúdo do cartão (componente filho) */}
       <div>{children}</div>
     </div>
   );

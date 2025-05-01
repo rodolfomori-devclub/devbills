@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface MonthYearSelectorProps {
   month: number;
@@ -7,55 +7,53 @@ interface MonthYearSelectorProps {
   onYearChange: (year: number) => void;
 }
 
-const MonthYearSelector = ({ month, year, onMonthChange, onYearChange }: MonthYearSelectorProps) => {
-  // Nomes dos meses em português
+const MonthYearSelector = ({
+  month,
+  year,
+  onMonthChange,
+  onYearChange,
+}: MonthYearSelectorProps) => {
   const monthNames = [
-    'Janeiro',
-    'Fevereiro',
-    'Março',
-    'Abril',
-    'Maio',
-    'Junho',
-    'Julho',
-    'Agosto',
-    'Setembro',
-    'Outubro',
-    'Novembro',
-    'Dezembro',
+    "Janeiro",
+    "Fevereiro",
+    "Março",
+    "Abril",
+    "Maio",
+    "Junho",
+    "Julho",
+    "Agosto",
+    "Setembro",
+    "Outubro",
+    "Novembro",
+    "Dezembro",
   ];
 
-  // Navegar para o mês anterior
-  const goToPreviousMonth = () => {
+  const handlePreviousMonth = () => {
     if (month === 1) {
-      // Se estamos em janeiro, voltar para dezembro do ano anterior
       onMonthChange(12);
       onYearChange(year - 1);
     } else {
-      // Caso contrário, apenas voltar um mês
       onMonthChange(month - 1);
     }
   };
 
-  // Navegar para o próximo mês
-  const goToNextMonth = () => {
+  const handleNextMonth = () => {
     if (month === 12) {
-      // Se estamos em dezembro, avançar para janeiro do próximo ano
       onMonthChange(1);
       onYearChange(year + 1);
     } else {
-      // Caso contrário, apenas avançar um mês
       onMonthChange(month + 1);
     }
   };
 
-  // Gerar anos para o seletor (5 anos para trás e 5 para frente)
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 11 }, (_, i) => currentYear - 5 + i);
 
   return (
     <div className="flex items-center justify-between bg-card rounded-lg p-3 border border-dark">
       <button
-        onClick={goToPreviousMonth}
+        type="button"
+        onClick={handlePreviousMonth}
         className="p-2 rounded-full hover:bg-lighter transition-colors text-muted hover:text-primary"
         aria-label="Mês anterior"
       >
@@ -63,22 +61,30 @@ const MonthYearSelector = ({ month, year, onMonthChange, onYearChange }: MonthYe
       </button>
 
       <div className="flex space-x-2">
+        <label className="sr-only" htmlFor="month-select">
+          Selecionar mês
+        </label>
         <select
+          id="month-select"
           value={month}
           onChange={(e) => onMonthChange(Number(e.target.value))}
-          className="bg-lighter border border-dark rounded-md py-1 px-3 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+          className="bg-lighter border border-dark rounded-md py-1 px-3 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-primary"
         >
           {monthNames.map((name, index) => (
-            <option key={index} value={index + 1}>
+            <option key={name} value={index + 1}>
               {name}
             </option>
           ))}
         </select>
 
+        <label className="sr-only" htmlFor="year-select">
+          Selecionar ano
+        </label>
         <select
+          id="year-select"
           value={year}
           onChange={(e) => onYearChange(Number(e.target.value))}
-          className="bg-lighter border border-dark rounded-md py-1 px-3 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+          className="bg-lighter border border-dark rounded-md py-1 px-3 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-primary"
         >
           {years.map((y) => (
             <option key={y} value={y}>
@@ -89,7 +95,8 @@ const MonthYearSelector = ({ month, year, onMonthChange, onYearChange }: MonthYe
       </div>
 
       <button
-        onClick={goToNextMonth}
+        type="button"
+        onClick={handleNextMonth}
         className="p-2 rounded-full hover:bg-lighter transition-colors text-muted hover:text-primary"
         aria-label="Próximo mês"
       >

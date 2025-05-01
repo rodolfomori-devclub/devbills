@@ -1,4 +1,4 @@
-import { InputHTMLAttributes, forwardRef, ReactNode } from 'react';
+import { type InputHTMLAttributes, forwardRef, type ReactNode, useId } from "react";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -8,31 +8,41 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ label, error, icon, fullWidth = true, className = '', ...rest }, ref) => {
+  ({ label, error, icon, fullWidth = true, className = "", ...rest }, ref) => {
+    const inputId = useId(); // Cria um ID único para acessibilidade
+
     return (
-      <div className={`${fullWidth ? 'w-full' : ''} mb-4`}>
-        {label && <label className="label">{label}</label>}
+      <div className={`${fullWidth ? "w-full" : ""} mb-4`}>
+        {label && (
+          <label htmlFor={inputId} className="label">
+            {label}
+          </label>
+        )}
+
         <div className="relative">
           {icon && (
             <div className="absolute inset-y-0 left-0 pl-1 flex items-center pointer-events-none text-muted">
               {icon}
             </div>
           )}
+
           <input
+            id={inputId}
             ref={ref}
-            className={`input ${icon ? 'pl-10' : ''} ${
-              error ? 'border-danger focus:border-danger focus:ring-danger' : ''
+            type={rest.type ?? "text"}
+            className={`input ${icon ? "pl-10" : ""} ${
+              error ? "border-danger focus:border-danger focus:ring-danger" : ""
             } ${className}`}
             {...rest}
-            style={icon ? { textIndent: '8px' } : undefined}
           />
         </div>
+
         {error && <p className="mt-1 text-sm text-danger">{error}</p>}
       </div>
     );
-  }
+  },
 );
 
-Input.displayName = 'Input';
+Input.displayName = "Input";
 
 export default Input;

@@ -1,9 +1,9 @@
-import { Category } from './category';
+import type { Category } from "./category";
 
 // Enum para tipo de transação
 export enum TransactionType {
-  EXPENSE = 'expense',
-  INCOME = 'income',
+  EXPENSE = "expense",
+  INCOME = "income",
 }
 
 // Transação completa

@@ -1,41 +1,48 @@
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Wallet, TrendingUp, List, CreditCard } from 'lucide-react';
-import Button from '../components/Button';
-import { useAuth } from '../contexts/AuthContext';
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Wallet, TrendingUp, List, CreditCard } from "lucide-react";
+import Button from "../components/Button";
+import { useAuth } from "../contexts/AuthContext";
 
-const Home = () => {
+interface Feature {
+  icon: React.ReactNode; // Changed from JSX.Element to React.ReactNode
+  title: string;
+  description: string;
+}
+
+const Home = (): React.ReactElement => {
+  // Changed from JSX.Element to React.ReactElement
   const { authState, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
 
-  // Redirecionar para o dashboard se o usuário estiver autenticado
   useEffect(() => {
     if (authState.user && !authState.loading) {
-      navigate('/dashboard');
+      navigate("/dashboard");
     }
   }, [authState.user, authState.loading, navigate]);
 
-  // Recursos da aplicação
-  const features = [
+  const features: Feature[] = [
     {
       icon: <Wallet className="w-8 h-8 text-primary" />,
-      title: 'Controle Financeiro',
-      description: 'Monitore suas despesas e receitas em um só lugar, com uma interface intuitiva e fácil de usar.',
+      title: "Controle Financeiro",
+      description:
+        "Monitore suas despesas e receitas em um só lugar, com uma interface intuitiva e fácil de usar.",
     },
     {
       icon: <TrendingUp className="w-8 h-8 text-primary" />,
-      title: 'Relatórios',
-      description: 'Visualize graficamente seus gastos e entenda para onde seu dinheiro está indo.',
+      title: "Relatórios",
+      description: "Visualize graficamente seus gastos e entenda para onde seu dinheiro está indo.",
     },
     {
       icon: <List className="w-8 h-8 text-primary" />,
-      title: 'Categorias Personalizadas',
-      description: 'Organize suas transações em categorias para melhor análise.',
+      title: "Categorias Personalizadas",
+      description: "Organize suas transações em categorias para melhor análise.",
     },
     {
       icon: <CreditCard className="w-8 h-8 text-primary" />,
-      title: 'Transações Ilimitadas',
-      description: 'Adicione quantas transações quiser e mantenha um histórico completo de suas finanças.',
+      title: "Transações Ilimitadas",
+      description:
+        "Adicione quantas transações quiser e mantenha um histórico completo de suas finanças.",
     },
   ];
 
@@ -50,8 +57,8 @@ const Home = () => {
                 Gerencie suas finanças com o <span className="text-primary">DevBills</span>
               </h1>
               <p className="text-lg text-white mb-8">
-                Uma plataforma simples e eficiente para controlar suas despesas e receitas.
-                Organize suas finanças pessoais ou do seu negócio com facilidade.
+                Uma plataforma simples e eficiente para controlar suas despesas e receitas. Organize
+                suas finanças pessoais ou do seu negócio com facilidade.
               </p>
               <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
                 <Button
@@ -63,9 +70,7 @@ const Home = () => {
                 </Button>
               </div>
             </div>
-            <div className="flex justify-center">
-              {/* Aqui você pode adicionar uma imagem ilustrativa */}
-            </div>
+            <div className="flex justify-center">{/* Imagem ou ilustração opcional */}</div>
           </div>
         </section>
 
@@ -75,14 +80,20 @@ const Home = () => {
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold text-white mb-4">Recursos do DevBills</h2>
               <p className="text-lg text-white max-w-2xl mx-auto">
-                Nossa plataforma oferece tudo o que você precisa para manter suas finanças organizadas.
+                Nossa plataforma oferece tudo o que você precisa para manter suas finanças
+                organizadas.
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {features.map((feature) => (
-                <div key={feature.title} className="bg-lighter p-6 rounded-xl hover:shadow-lg transition duration-200 hover:shadow-primary/10 border border-border">
-                  <div className="mb-4 bg-primary/10 p-3 rounded-full inline-block">{feature.icon}</div>
+                <div
+                  key={feature.title}
+                  className="bg-lighter p-6 rounded-xl hover:shadow-lg transition duration-200 hover:shadow-primary/10 border border-border"
+                >
+                  <div className="mb-4 bg-primary/10 p-3 rounded-full inline-block">
+                    {feature.icon}
+                  </div>
                   <h3 className="text-xl font-semibold text-white mb-2">{feature.title}</h3>
                   <p className="text-text-muted">{feature.description}</p>
                 </div>
@@ -98,8 +109,8 @@ const Home = () => {
               Pronto para organizar suas finanças?
             </h2>
             <p className="text-white text-opacity-90 max-w-2xl mx-auto mb-8">
-              Comece a usar o DevBills hoje mesmo e tenha o controle total sobre seu dinheiro.
-              É gratuito e fácil de usar!
+              Comece a usar o DevBills hoje mesmo e tenha o controle total sobre seu dinheiro. É
+              gratuito e fácil de usar!
             </p>
             <Button
               onClick={() => signInWithGoogle()}
@@ -116,7 +127,9 @@ const Home = () => {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-4 md:mb-0">
               <h3 className="text-xl font-bold text-primary">DevBills</h3>
-              <p className="text-text-muted text-sm">© {new Date().getFullYear()} - Todos os direitos reservados</p>
+              <p className="text-text-muted text-sm">
+                © {new Date().getFullYear()} - Todos os direitos reservados
+              </p>
             </div>
           </div>
         </footer>

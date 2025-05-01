@@ -1,9 +1,9 @@
-import { TransactionType } from './transaction';
+import type { TransactionType } from "./transaction";
 
 // Tipagem da Categoria
 export interface Category {
   _id?: string; // MongoDB
-  id?: string;  // Prisma
+  id?: string; // Prisma
   name: string;
   color: string;
   icon: string;
