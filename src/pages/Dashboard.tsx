@@ -1,3 +1,5 @@
+// src/pages/Dashboard.tsx
+import type { FC } from "react";
 import { useState, useEffect } from "react";
 import { ArrowUp, ArrowDown, Wallet, TrendingUp, Calendar } from "lucide-react";
 import {
@@ -22,21 +24,28 @@ import { getTransactionSummary, getTransactions } from "../services/transactionS
 import { formatCurrency } from "../utils/formatters";
 import { GRAPH_COLORS } from "../utils/colors";
 
-import type { TransactionSummary, MonthlyItem, Transaction, CategorySummary } from "../types";
+import type { TransactionSummary, MonthlyItem } from "../types";
 
 import dayjs from "dayjs";
 
-const Dashboard = () => {
-  const [month, setMonth] = useState<number>(new Date().getMonth() + 1);
-  const [year, setYear] = useState<number>(new Date().getFullYear());
+interface ChartLabelProps {
+  categoryName: string;
+  percent: number;
+}
 
-  const [summary, setSummary] = useState<TransactionSummary>({
+const Dashboard: FC = () => {
+  const currentDate = new Date();
+  const [month, setMonth] = useState<number>(currentDate.getMonth() + 1);
+  const [year, setYear] = useState<number>(currentDate.getFullYear());
+
+  const initialSummary: TransactionSummary = {
     totalIncomes: 0,
     totalExpenses: 0,
     balance: 0,
     expensesByCategory: [],
-  });
+  };
 
+  const [summary, setSummary] = useState<TransactionSummary>(initialSummary);
   const [monthlyData, setMonthlyData] = useState<MonthlyItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -44,9 +53,9 @@ const Dashboard = () => {
     const loadMonthlySummary = async (): Promise<void> => {
       try {
         setLoading(true);
-        const summaryData: TransactionSummary = await getTransactionSummary(month, year);
+        const summaryData = await getTransactionSummary(month, year);
         setSummary(summaryData);
-      } catch (error: unknown) {
+      } catch (error) {
         console.error("Erro ao carregar resumo:", error);
       } finally {
         setLoading(false);
@@ -69,7 +78,7 @@ const Dashboard = () => {
           const monthNumber = date.getMonth() + 1;
           const yearNumber = date.getFullYear();
 
-          const transactions: Transaction[] = await getTransactions({
+          const transactions = await getTransactions({
             month: monthNumber,
             year: yearNumber,
           });
@@ -92,7 +101,7 @@ const Dashboard = () => {
         }
 
         setMonthlyData(history);
-      } catch (error: unknown) {
+      } catch (error) {
         console.error("Erro ao carregar histórico:", error);
       }
     };
@@ -100,13 +109,19 @@ const Dashboard = () => {
     loadHistoricalTransactions();
   }, [month, year]);
 
-  const formatTooltipValue = (value: number): string => formatCurrency(value);
+  const formatTooltipValue = (value: number | string | Array<number | string>): string => {
+    return formatCurrency(typeof value === "number" ? value : 0);
+  };
+
+  const renderPieChartLabel = ({ categoryName, percent }: ChartLabelProps): string => {
+    return `${categoryName}: ${(percent * 100).toFixed(1)}%`;
+  };
 
   if (loading) {
     return (
       <div className="container-app py-8">
         <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
-        <Loading text="Carregando dados financeiros..." />
+        <Loading size="large" text="Carregando dados financeiros..." />
       </div>
     );
   }
@@ -131,7 +146,9 @@ const Dashboard = () => {
           glowEffect={summary.balance > 0}
         >
           <p
-            className={`text-2xl font-semibold mt-2 ${summary.balance >= 0 ? "text-primary" : "text-red-500"}`}
+            className={`text-2xl font-semibold mt-2 ${
+              summary.balance >= 0 ? "text-primary" : "text-red-500"
+            }`}
           >
             {formatCurrency(summary.balance)}
           </p>
@@ -161,17 +178,11 @@ const Dashboard = () => {
                     outerRadius={80}
                     dataKey="amount"
                     nameKey="categoryName"
-                    label={({
-                      categoryName,
-                      percent,
-                    }: {
-                      categoryName: string;
-                      percent: number;
-                    }) => `${categoryName}: ${(percent * 100).toFixed(1)}%`}
+                    label={renderPieChartLabel}
                   >
-                    {summary.expensesByCategory.map((entry: CategorySummary) => (
+                    {summary.expensesByCategory.map((entry) => (
                       <Cell
-                        key={entry.categoryName}
+                        key={entry.categoryId || entry.categoryName}
                         fill={
                           entry.categoryColor ||
                           GRAPH_COLORS[Math.floor(Math.random() * GRAPH_COLORS.length)]

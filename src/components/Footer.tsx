@@ -1,8 +1,12 @@
 // src/components/Footer.tsx
+import type { FC } from "react";
 
-const Footer = () => {
+/**
+ * Componente de rodapé da aplicação
+ */
+const Footer: FC = () => {
   // Obtém o ano atual dinamicamente
-  const currentYear = new Date().getFullYear();
+  const currentYear: number = new Date().getFullYear();
 
   return (
     <footer className="bg-lighter border-t border-dark py-4">

@@ -1,3 +1,4 @@
+// src/components/Select.tsx
 import { forwardRef, useId } from "react";
 import type { SelectHTMLAttributes, ReactNode } from "react";
 
@@ -15,8 +16,20 @@ interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
 }
 
 const Select = forwardRef<HTMLSelectElement, SelectProps>(
-  ({ label, options, error, icon, fullWidth = true, className = "", ...rest }, ref) => {
-    const selectId = useId();
+  ({ label, options, error, icon, fullWidth = true, className = "", id, ...rest }, ref) => {
+    const generatedId = useId();
+    const selectId = id || generatedId;
+
+    const selectClasses = [
+      "input",
+      "bg-lighter",
+      "appearance-none",
+      icon ? "pl-10" : "",
+      error ? "border-danger focus:border-danger focus:ring-danger" : "",
+      className,
+    ]
+      .filter(Boolean)
+      .join(" ");
 
     return (
       <div className={`${fullWidth ? "w-full" : ""} mb-4`}>
@@ -36,9 +49,9 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
           <select
             id={selectId}
             ref={ref}
-            className={`input ${icon ? "pl-10" : ""} ${
-              error ? "border-danger focus:border-danger focus:ring-danger" : ""
-            } ${className} bg-lighter appearance-none`}
+            className={selectClasses}
+            aria-invalid={!!error}
+            aria-describedby={error ? `${selectId}-error` : undefined}
             {...rest}
           >
             {options.map((option) => (
@@ -48,17 +61,14 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
             ))}
           </select>
 
-          {/* Ícone da seta */}
           <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
             <svg
               className="h-5 w-5 text-muted"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
               fill="currentColor"
-              role="img"
-              aria-label="Seta para baixo"
+              aria-hidden="true"
             >
-              <title>Expandir</title>
               <path
                 fillRule="evenodd"
                 d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
@@ -68,7 +78,11 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
           </div>
         </div>
 
-        {error && <p className="mt-1 text-sm text-danger">{error}</p>}
+        {error && (
+          <p id={`${selectId}-error`} className="mt-1 text-sm text-danger">
+            {error}
+          </p>
+        )}
       </div>
     );
   },

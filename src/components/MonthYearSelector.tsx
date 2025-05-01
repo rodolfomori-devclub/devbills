@@ -1,3 +1,5 @@
+// src/components/MonthYearSelector.tsx
+import type { FC } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface MonthYearSelectorProps {
@@ -7,13 +9,13 @@ interface MonthYearSelectorProps {
   onYearChange: (year: number) => void;
 }
 
-const MonthYearSelector = ({
+const MonthYearSelector: FC<MonthYearSelectorProps> = ({
   month,
   year,
   onMonthChange,
   onYearChange,
-}: MonthYearSelectorProps) => {
-  const monthNames = [
+}) => {
+  const monthNames: readonly string[] = [
     "Janeiro",
     "Fevereiro",
     "Março",
@@ -28,7 +30,7 @@ const MonthYearSelector = ({
     "Dezembro",
   ];
 
-  const handlePreviousMonth = () => {
+  const handlePreviousMonth = (): void => {
     if (month === 1) {
       onMonthChange(12);
       onYearChange(year - 1);
@@ -37,7 +39,7 @@ const MonthYearSelector = ({
     }
   };
 
-  const handleNextMonth = () => {
+  const handleNextMonth = (): void => {
     if (month === 12) {
       onMonthChange(1);
       onYearChange(year + 1);
@@ -47,7 +49,7 @@ const MonthYearSelector = ({
   };
 
   const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: 11 }, (_, i) => currentYear - 5 + i);
+  const years: number[] = Array.from({ length: 11 }, (_, i) => currentYear - 5 + i);
 
   return (
     <div className="flex items-center justify-between bg-card rounded-lg p-3 border border-dark">

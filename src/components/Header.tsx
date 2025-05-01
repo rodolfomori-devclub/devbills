@@ -1,20 +1,67 @@
 // src/components/Header.tsx
+import type { FC } from "react";
 import { Activity, LogOut, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
-const Header = () => {
+/**
+ * Interface para os links de navegação
+ */
+interface NavLink {
+  nome: string;
+  caminho: string;
+}
+
+/**
+ * Componente de cabeçalho da aplicação
+ * Responsável pela navegação e exibição de informações do usuário
+ */
+const Header: FC = () => {
   const { authState, signOut } = useAuth();
   const { pathname } = useLocation();
-  const [menuAberto, setMenuAberto] = useState(false);
+  const [menuAberto, setMenuAberto] = useState<boolean>(false);
 
-  const estaAutenticado = !!authState.user;
+  const estaAutenticado: boolean = !!authState.user;
 
-  const linksNavegacao = [
+  // Lista de links de navegação disponíveis quando autenticado
+  const linksNavegacao: NavLink[] = [
     { nome: "Dashboard", caminho: "/dashboard" },
     { nome: "Transações", caminho: "/transactions" },
   ];
+
+  // Renderiza o avatar do usuário
+  const renderizarAvatar = () => {
+    if (!authState.user) return null;
+
+    if (authState.user.photoURL) {
+      return (
+        <img
+          src={authState.user.photoURL}
+          alt={authState.user.displayName || "Usuário"}
+          className="w-8 h-8 rounded-full border border-dark"
+        />
+      );
+    }
+
+    // Avatar com a primeira letra do nome quando não há foto
+    return (
+      <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-medium">
+        {authState.user.displayName?.charAt(0) || "U"}
+      </div>
+    );
+  };
+
+  // Alternador do menu mobile
+  const alternarMenu = (): void => {
+    setMenuAberto(!menuAberto);
+  };
+
+  // Fecha o menu e faz logout
+  const handleLogout = (): void => {
+    signOut();
+    setMenuAberto(false);
+  };
 
   return (
     <header className="bg-card border-b border-dark">
@@ -47,17 +94,7 @@ const Header = () => {
               <div className="flex items-center space-x-4">
                 {/* Avatar */}
                 <div className="flex items-center space-x-2">
-                  {authState.user?.photoURL ? (
-                    <img
-                      src={authState.user.photoURL}
-                      alt={authState.user.displayName || "Usuário"}
-                      className="w-8 h-8 rounded-full border border-dark"
-                    />
-                  ) : (
-                    <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-medium">
-                      {authState.user?.displayName?.charAt(0) || "U"}
-                    </div>
-                  )}
+                  {renderizarAvatar()}
                   <span className="text-sm font-medium">
                     {authState.user?.displayName || authState.user?.email}
                   </span>
@@ -85,7 +122,9 @@ const Header = () => {
             <button
               type="button"
               className="text-muted p-2 rounded-lg hover:bg-lighter transition-colors"
-              onClick={() => setMenuAberto(!menuAberto)}
+              onClick={alternarMenu}
+              aria-expanded={menuAberto}
+              aria-label={menuAberto ? "Fechar menu" : "Abrir menu"}
             >
               {menuAberto ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -120,27 +159,14 @@ const Header = () => {
                 {/* Avatar e botão de logout */}
                 <div className="flex items-center justify-between pt-3 border-t border-dark">
                   <div className="flex items-center space-x-2">
-                    {authState.user?.photoURL ? (
-                      <img
-                        src={authState.user.photoURL}
-                        alt={authState.user.displayName || "Usuário"}
-                        className="w-8 h-8 rounded-full border border-dark"
-                      />
-                    ) : (
-                      <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-medium">
-                        {authState.user?.displayName?.charAt(0) || "U"}
-                      </div>
-                    )}
+                    {renderizarAvatar()}
                     <span className="text-sm font-medium">
                       {authState.user?.displayName || authState.user?.email}
                     </span>
                   </div>
                   <button
                     type="button"
-                    onClick={() => {
-                      signOut();
-                      setMenuAberto(false);
-                    }}
+                    onClick={handleLogout}
                     className="text-muted hover:text-danger p-2 rounded-full hover:bg-opacity-10 hover:bg-red-500 transition-colors"
                   >
                     <LogOut size={20} />

@@ -1,8 +1,9 @@
-import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider } from 'firebase/auth';
+// src/config/firebase.ts
+import type { FirebaseOptions } from "firebase/app";
+import { initializeApp } from "firebase/app";
+import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
-// 🔐 Configurações vindas de variáveis de ambiente (.env)
-const firebaseConfig = {
+const firebaseConfig: FirebaseOptions = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
@@ -11,12 +12,8 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 } as const;
 
-// 🚀 Inicializar app Firebase
 const firebaseApp = initializeApp(firebaseConfig);
-
-// 🔑 Serviços de autenticação
 const firebaseAuth = getAuth(firebaseApp);
 const googleAuthProvider = new GoogleAuthProvider();
 
-// ✅ Exports nominais e claros para reutilização
 export { firebaseApp, firebaseAuth, googleAuthProvider };

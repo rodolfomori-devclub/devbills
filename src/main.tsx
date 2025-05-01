@@ -1,15 +1,12 @@
 // src/main.tsx
 
-// Importa o React e o ReactDOM
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-const rootElement = document.getElementById('root');
+import React from "react";
+import ReactDOM from "react-dom/client";
+const rootElement = document.getElementById("root");
 
-// Componente principal da aplicação
-import App from './App.tsx';
+import App from "./App.tsx";
 
-// Estilos globais (Tailwind, fontes, etc.)
-import './index.css';
+import "./index.css";
 
 if (!rootElement) {
   throw new Error("Elemento 'root' não encontrado no DOM.");

@@ -1,10 +1,12 @@
 // src/contexts/AuthContext.tsx
-import { createContext, useState, useEffect, useContext, type ReactNode } from "react";
+import type { FC } from "react";
+import { createContext, useState, useEffect, useContext } from "react";
+import type { ReactNode } from "react";
 import { signInWithPopup, signOut as firebaseSignOut, onAuthStateChanged } from "firebase/auth";
+import type { User } from "firebase/auth";
 import { firebaseAuth, googleAuthProvider } from "../config/firebase";
 import type { AuthState } from "../types";
 
-// Tipagem do contexto de autenticação
 interface AuthContextProps {
   authState: AuthState;
   signInWithGoogle: () => Promise<void>;
@@ -17,26 +19,20 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
-export const AuthProvider = ({ children }: AuthProviderProps) => {
+export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   const [authState, setAuthState] = useState<AuthState>({
     user: null,
     loading: true,
     error: null,
   });
 
-  // Monitora mudanças na autenticação
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(
       firebaseAuth,
       (user) => {
         if (user) {
           setAuthState({
-            user: {
-              uid: user.uid,
-              displayName: user.displayName,
-              email: user.email,
-              photoURL: user.photoURL,
-            },
+            user: mapUserData(user),
             loading: false,
             error: null,
           });
@@ -57,15 +53,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     return () => unsubscribe();
   }, []);
 
-  // Login com Google
-  const signInWithGoogle = async () => {
+  const mapUserData = (user: User) => ({
+    uid: user.uid,
+    displayName: user.displayName,
+    email: user.email,
+    photoURL: user.photoURL,
+  });
+
+  const signInWithGoogle = async (): Promise<void> => {
     setAuthState((prev) => ({ ...prev, loading: true, error: null }));
 
     try {
       await signInWithPopup(firebaseAuth, googleAuthProvider);
-    } catch (error: unknown) {
+    } catch (error) {
       const message = error instanceof Error ? error.message : "Erro ao autenticar com o Google";
-
       setAuthState((prev) => ({
         ...prev,
         loading: false,
@@ -74,15 +75,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
-  // Logout
-  const signOut = async () => {
+  const signOut = async (): Promise<void> => {
     setAuthState((prev) => ({ ...prev, loading: true }));
 
     try {
       await firebaseSignOut(firebaseAuth);
-    } catch (error: unknown) {
+    } catch (error) {
       const message = error instanceof Error ? error.message : "Erro ao sair da conta";
-
       setAuthState((prev) => ({
         ...prev,
         loading: false,
@@ -98,7 +97,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   );
 };
 
-// Hook personalizado
 export const useAuth = (): AuthContextProps => {
   const context = useContext(AuthContext);
 

@@ -1,4 +1,7 @@
-import { BrowserRouter, Route, Routes as RouterSwitch } from "react-router-dom";
+// src/routes/index.tsx
+import type { FC } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import type { ToastContainerProps } from "react-toastify";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -8,8 +11,8 @@ import { AuthProvider } from "../contexts/AuthContext";
 // Layouts
 import AppLayout from "../layout/AppLayout";
 
-import Dashboard from "../pages/Dashboard";
 // Pages
+import Dashboard from "../pages/Dashboard";
 import Home from "../pages/Home";
 import Login from "../pages/Login";
 import TransactionForm from "../pages/TransactionForm";
@@ -18,48 +21,52 @@ import Transactions from "../pages/Transactions";
 // Routes
 import PrivateRoute from "./PrivateRoute";
 
-const AppRoutes = () => {
-	return (
-		<BrowserRouter>
-			<AuthProvider>
-				<RouterSwitch>
-					{/* Rotas públicas */}
-					<Route path="/" element={<Home />} />
-					<Route path="/login" element={<Login />} />
+/**
+ * Configuração principal das rotas da aplicação
+ */
+const AppRoutes: FC = () => {
+  // Configurações do toast
+  const toastConfig: ToastContainerProps = {
+    position: "top-right",
+    autoClose: 3000,
+    hideProgressBar: false,
+    newestOnTop: true,
+    closeOnClick: true,
+    pauseOnFocusLoss: true,
+    draggable: true,
+    pauseOnHover: true,
+    theme: "colored",
+  };
 
-					{/* Rotas protegidas */}
-					<Route element={<PrivateRoute />}>
-						<Route element={<AppLayout />}>
-							<Route path="/dashboard" element={<Dashboard />} />
-							<Route path="/transactions" element={<Transactions />} />
-							<Route path="/transactions/new" element={<TransactionForm />} />
-						</Route>
-					</Route>
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <Routes>
+          {/* Rotas públicas */}
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
 
-					{/* Rota 404 */}
-					<Route
-						path="*"
-						element={
-							<h1 className="text-center text-white">Página não encontrada</h1>
-						}
-					/>
-				</RouterSwitch>
+          {/* Rotas protegidas */}
+          <Route element={<PrivateRoute />}>
+            <Route element={<AppLayout />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/transactions" element={<Transactions />} />
+              <Route path="/transactions/new" element={<TransactionForm />} />
+            </Route>
+          </Route>
 
-				{/* Toast notifications */}
-				<ToastContainer
-					position="top-right"
-					autoClose={3000}
-					hideProgressBar={false}
-					newestOnTop
-					closeOnClick
-					pauseOnFocusLoss
-					draggable
-					pauseOnHover
-					theme="colored"
-				/>
-			</AuthProvider>
-		</BrowserRouter>
-	);
+          {/* Rota 404 */}
+          <Route
+            path="*"
+            element={<h1 className="text-center text-white">Página não encontrada</h1>}
+          />
+        </Routes>
+
+        {/* Toast notifications */}
+        <ToastContainer {...toastConfig} />
+      </AuthProvider>
+    </BrowserRouter>
+  );
 };
 
 export default AppRoutes;

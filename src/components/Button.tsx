@@ -1,5 +1,5 @@
 // src/components/Button.tsx
-import type { ButtonHTMLAttributes, ReactNode } from "react";
+import type { ButtonHTMLAttributes, FC, ReactNode } from "react";
 
 // Define as variantes visuais disponíveis
 type ButtonVariant = "primary" | "outline" | "secondary" | "success" | "danger";
@@ -12,15 +12,15 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   isLoading?: boolean;
 }
 
-const Button = ({
+const Button: FC<ButtonProps> = ({
   children,
   variant = "primary",
   fullWidth = false,
   isLoading = false,
   className = "",
-  disabled,
-  ...rest // repassa qualquer outra prop padrão de <button> (ex: onClick, type)
-}: ButtonProps) => {
+  disabled, // Add this line to extract the disabled prop
+  ...rest
+}) => {
   // Define classes com base na variante escolhida
   const variantClass: string =
     {

@@ -1,27 +1,25 @@
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Button from '../components/Button';
-import { useAuth } from '../contexts/AuthContext';
-import type { FC } from 'react';
-import GoogleLoginButton from '../components/GoogleLoginButton';
+// src/pages/Login.tsx
+import type { FC } from "react";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import GoogleLoginButton from "../components/GoogleLoginButton";
 
 const Login: FC = () => {
   const { authState, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
 
-  // Se o usuário já estiver autenticado, redirecionar para o dashboard
   useEffect(() => {
     if (authState.user && !authState.loading) {
-      navigate('/dashboard');
+      navigate("/dashboard");
     }
   }, [authState.user, authState.loading, navigate]);
 
-  // Handler para login com Google
-  const handleGoogleLogin = async () => {
+  const handleGoogleLogin = async (): Promise<void> => {
     try {
       await signInWithGoogle();
     } catch (error) {
-      console.error('Erro ao fazer login com Google:', error);
+      console.error("Erro ao fazer login com Google:", error);
     }
   };
 
@@ -34,6 +32,7 @@ const Login: FC = () => {
             Gerencie suas finanças de forma simples e eficiente
           </p>
         </div>
+
         <div className="mt-8 bg-white py-8 px-4 shadow-md rounded-lg sm:px-10">
           <div className="space-y-6">
             <div>
@@ -44,14 +43,11 @@ const Login: FC = () => {
             </div>
 
             <div className="space-y-4">
-              <GoogleLoginButton
-                onClick={handleGoogleLogin}
-                isLoading={authState.loading}
-              />
+              <GoogleLoginButton onClick={handleGoogleLogin} isLoading={authState.loading} />
             </div>
 
             {authState.error && (
-              <div className="p-3 bg-red-50 text-red-700 text-sm rounded">
+              <div className="p-3 bg-red-50 text-red-700 text-sm rounded" role="alert">
                 <p>{authState.error}</p>
               </div>
             )}

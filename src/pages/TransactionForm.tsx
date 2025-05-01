@@ -1,52 +1,58 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Calendar, DollarSign, Tag, Save, AlertCircle } from 'lucide-react';
-import { toast } from 'react-toastify';
+// src/pages/TransactionForm.tsx
+import type { FC, ChangeEvent, FormEvent } from "react";
+import { useState, useEffect, useId } from "react";
+import { useNavigate } from "react-router-dom";
+import { Calendar, DollarSign, Tag, Save, AlertCircle } from "lucide-react";
+import { toast } from "react-toastify";
 
-import Button from '../components/Button';
-import Input from '../components/Input';
-import Select from '../components/Select';
-import Loading from '../components/Loading';
-import Card from '../components/Card';
-import TransactionTypeSelector from '../components/TransactionTypeSelector';
+import Button from "../components/Button";
+import Input from "../components/Input";
+import Select from "../components/Select";
+import Loading from "../components/Loading";
+import Card from "../components/Card";
+import TransactionTypeSelector from "../components/TransactionTypeSelector";
 
-import { getCategories } from '../services/categoryService';
-import { createTransaction } from '../services/transactionService';
-import { Category, CreateTransactionDTO, TransactionType } from '../types';
+import { getCategories } from "../services/categoryService";
+import { createTransaction } from "../services/transactionService";
+import type { Category, CreateTransactionDTO } from "../types";
+import { TransactionType } from "../types";
 
-type FormData = {
+interface FormData {
   description: string;
   amount: string;
   date: string;
   categoryId: string;
   type: TransactionType;
-};
+}
 
-const TransactionForm = () => {
+const TransactionForm: FC = () => {
   const navigate = useNavigate();
+  const today = new Date().toISOString().split("T")[0];
+  const typeFieldId = useId();
 
-  const [formData, setFormData] = useState<FormData>({
-    description: '',
-    amount: '',
-    date: new Date().toISOString().split('T')[0],
-    categoryId: '',
+  const initialFormData: FormData = {
+    description: "",
+    amount: "",
+    date: today,
+    categoryId: "",
     type: TransactionType.EXPENSE,
-  });
+  };
 
+  const [formData, setFormData] = useState<FormData>(initialFormData);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [submitting, setSubmitting] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchCategories = async () => {
+    const fetchCategories = async (): Promise<void> => {
       try {
         setLoading(true);
         const data = await getCategories();
         setCategories(data);
       } catch (err) {
-        console.error('Erro ao carregar categorias:', err);
-        setError('Erro ao carregar categorias');
+        console.error("Erro ao carregar categorias:", err);
+        setError("Erro ao carregar categorias");
       } finally {
         setLoading(false);
       }
@@ -55,59 +61,72 @@ const TransactionForm = () => {
     fetchCategories();
   }, []);
 
-  const filteredCategories = categories.filter(
-    (category) => category.type === formData.type
-  );
+  const filteredCategories = categories.filter((category) => category.type === formData.type);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleTypeChange = (type: TransactionType): void => {
+    setFormData((prev) => ({ ...prev, type, categoryId: "" }));
+  };
+
+  const validateForm = (): boolean => {
+    if (!formData.description || !formData.amount || !formData.date || !formData.categoryId) {
+      setError("Todos os campos são obrigatórios");
+      return false;
+    }
+
+    if (Number.parseFloat(formData.amount) <= 0) {
+      setError("O valor deve ser maior que zero");
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async (e: FormEvent): Promise<void> => {
     e.preventDefault();
 
     try {
       setSubmitting(true);
       setError(null);
 
-      if (
-        !formData.description ||
-        !formData.amount ||
-        !formData.date ||
-        !formData.categoryId
-      ) {
-        setError('Todos os campos são obrigatórios');
+      if (!validateForm()) {
+        setSubmitting(false);
         return;
       }
 
       const transactionData: CreateTransactionDTO = {
         description: formData.description,
-        amount: parseFloat(formData.amount),
+        amount: Number.parseFloat(formData.amount),
         date: new Date(formData.date).toISOString(),
         categoryId: formData.categoryId,
         type: formData.type,
       };
 
       await createTransaction(transactionData);
-      toast.success('Transação criada com sucesso!');
-      navigate('/transactions');
+      toast.success("Transação criada com sucesso!");
+      navigate("/transactions");
     } catch (err) {
-      console.error('Erro ao salvar transação:', err);
-      setError('Não foi possível salvar a transação.');
-      toast.error('Erro ao criar transação');
+      console.error("Erro ao salvar transação:", err);
+      setError("Não foi possível salvar a transação.");
+      toast.error("Erro ao criar transação");
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const handleCancel = (): void => {
+    navigate("/transactions");
   };
 
   if (loading) {
     return (
       <div className="container-app py-8">
         <div className="flex justify-center py-12">
-          <Loading text="Carregando formulário..." />
+          <Loading size="large" text="Carregando formulário..." />
         </div>
       </div>
     );
@@ -120,25 +139,27 @@ const TransactionForm = () => {
 
         <Card>
           {error && (
-            <div className="bg-danger bg-opacity-10 border border-danger border-opacity-20 rounded-xl p-4 mb-6 flex items-start">
+            <div
+              className="bg-danger bg-opacity-10 border border-danger border-opacity-20 rounded-xl p-4 mb-6 flex items-start"
+              role="alert"
+            >
               <AlertCircle className="w-5 h-5 text-danger mr-2 flex-shrink-0 mt-0.5" />
               <p className="text-danger">{error}</p>
             </div>
           )}
 
           <form onSubmit={handleSubmit}>
-            {/* Tipo */}
             <div className="mb-4">
-              <label className="label">Tipo de Transação</label>
+              <label htmlFor={typeFieldId} className="label">
+                Tipo de Transação
+              </label>
               <TransactionTypeSelector
+                id={typeFieldId}
                 value={formData.type}
-                onChange={(type) =>
-                  setFormData((prev) => ({ ...prev, type, categoryId: '' }))
-                }
+                onChange={handleTypeChange}
               />
             </div>
 
-            {/* Descrição */}
             <Input
               label="Descrição"
               name="description"
@@ -148,7 +169,6 @@ const TransactionForm = () => {
               required
             />
 
-            {/* Valor */}
             <Input
               label="Valor"
               name="amount"
@@ -162,7 +182,6 @@ const TransactionForm = () => {
               required
             />
 
-            {/* Data */}
             <Input
               label="Data"
               name="date"
@@ -173,16 +192,15 @@ const TransactionForm = () => {
               required
             />
 
-            {/* Categoria */}
             <Select
               label="Categoria"
               name="categoryId"
               value={formData.categoryId}
               onChange={handleChange}
               options={[
-                { value: '', label: 'Selecione uma categoria' },
+                { value: "", label: "Selecione uma categoria" },
                 ...filteredCategories.map((category) => ({
-                  value: category._id ?? category.id ?? '',
+                  value: category._id ?? category.id ?? "",
                   label: category.name,
                 })),
               ]}
@@ -190,28 +208,18 @@ const TransactionForm = () => {
               required
             />
 
-            {/* Botões */}
             <div className="flex justify-end space-x-3 mt-6">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => navigate('/transactions')}
-                disabled={submitting}
-              >
+              <Button type="button" variant="outline" onClick={handleCancel} disabled={submitting}>
                 Cancelar
               </Button>
               <Button
                 type="submit"
-                variant={
-                  formData.type === TransactionType.EXPENSE
-                    ? 'danger'
-                    : 'success'
-                }
+                variant={formData.type === TransactionType.EXPENSE ? "danger" : "success"}
                 isLoading={submitting}
                 disabled={submitting || filteredCategories.length === 0}
               >
                 <Save className="w-4 h-4 mr-2" />
-                {submitting ? 'Salvando...' : 'Salvar'}
+                {submitting ? "Salvando..." : "Salvar"}
               </Button>
             </div>
           </form>

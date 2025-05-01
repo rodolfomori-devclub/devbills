@@ -1,34 +1,36 @@
+// src/components/Loading.tsx
+import type { FC } from "react";
+
+type LoadingSize = "small" | "medium" | "large";
+
 interface LoadingProps {
-  size?: "small" | "medium" | "large";
+  size?: LoadingSize;
   fullScreen?: boolean;
   text?: string;
 }
 
-const Loading = ({ size = "medium", fullScreen = false, text = "Carregando..." }: LoadingProps) => {
-  const getSizeClass = () => {
-    switch (size) {
-      case "small":
-        return "w-5 h-5";
-      case "medium":
-        return "w-8 h-8";
-      case "large":
-        return "w-12 h-12";
-      default:
-        return "w-8 h-8";
-    }
+const Loading: FC<LoadingProps> = ({
+  size = "medium",
+  fullScreen = false,
+  text = "Carregando...",
+}) => {
+  const sizeClasses: Record<LoadingSize, string> = {
+    small: "w-5 h-5",
+    medium: "w-8 h-8",
+    large: "w-12 h-12",
   };
 
   const loadingContent = (
     <div className="flex flex-col items-center justify-center">
       <svg
-        className={`animate-spin ${getSizeClass()} text-primary`}
+        className={`animate-spin ${sizeClasses[size]} text-primary`}
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
         aria-label="Carregando"
         aria-busy="true"
       >
-        <title>Ícone de carregamento</title> {/* ✅ Título acessível */}
+        <title>Ícone de carregamento</title>
         <circle
           className="opacity-25"
           cx="12"

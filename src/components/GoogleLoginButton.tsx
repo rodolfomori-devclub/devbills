@@ -1,20 +1,29 @@
 // src/components/GoogleLoginButton.tsx
-
+import type { FC } from "react";
 import Button from "./Button";
 
-// Props esperadas pelo botão de login com Google
+/**
+ * Props esperadas pelo botão de login com Google
+ */
 interface GoogleLoginButtonProps {
+  /** Função chamada ao clicar no botão */
   onClick: () => void;
+  /** Estado de carregamento do botão */
   isLoading: boolean;
 }
 
-const GoogleLoginButton = ({ onClick, isLoading }: GoogleLoginButtonProps) => {
+/**
+ * Componente de botão de login com Google
+ * Utiliza o componente Button como base e adiciona o ícone do Google
+ */
+const GoogleLoginButton: FC<GoogleLoginButtonProps> = ({ onClick, isLoading }) => {
   return (
     <Button
       onClick={onClick}
       fullWidth
       isLoading={isLoading}
       className="flex items-center justify-center"
+      type="button"
     >
       {/* Ícone do Google */}
       <svg className="h-5 w-5 mr-2" aria-hidden="true" viewBox="0 0 24 24">

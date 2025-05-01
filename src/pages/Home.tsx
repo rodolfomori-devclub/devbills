@@ -1,19 +1,20 @@
-import { useEffect } from "react";
+// src/pages/Home.tsx
+import { type FC, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Wallet, TrendingUp, List, CreditCard } from "lucide-react";
 import Button from "../components/Button";
 import { useAuth } from "../contexts/AuthContext";
 
 interface Feature {
-  icon: React.ReactNode; // Changed from JSX.Element to React.ReactNode
+  icon: React.ReactNode;
   title: string;
   description: string;
 }
 
-const Home = (): React.ReactElement => {
-  // Changed from JSX.Element to React.ReactElement
+const Home: FC = () => {
   const { authState, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
+  const currentYear = new Date().getFullYear();
 
   useEffect(() => {
     if (authState.user && !authState.loading) {
@@ -21,7 +22,7 @@ const Home = (): React.ReactElement => {
     }
   }, [authState.user, authState.loading, navigate]);
 
-  const features: Feature[] = [
+  const features: ReadonlyArray<Feature> = [
     {
       icon: <Wallet className="w-8 h-8 text-primary" />,
       title: "Controle Financeiro",
@@ -46,6 +47,10 @@ const Home = (): React.ReactElement => {
     },
   ];
 
+  const handleLogin = () => {
+    signInWithGoogle();
+  };
+
   return (
     <div className="bg-app min-h-screen">
       <div className="container-app">
@@ -62,7 +67,7 @@ const Home = (): React.ReactElement => {
               </p>
               <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
                 <Button
-                  onClick={() => signInWithGoogle()}
+                  onClick={handleLogin}
                   className="text-center px-6 py-3"
                   isLoading={authState.loading}
                 >
@@ -112,11 +117,7 @@ const Home = (): React.ReactElement => {
               Comece a usar o DevBills hoje mesmo e tenha o controle total sobre seu dinheiro. É
               gratuito e fácil de usar!
             </p>
-            <Button
-              onClick={() => signInWithGoogle()}
-              className="px-6 py-3"
-              isLoading={authState.loading}
-            >
+            <Button onClick={handleLogin} className="px-6 py-3" isLoading={authState.loading}>
               Criar Conta Gratuita
             </Button>
           </div>
@@ -128,7 +129,7 @@ const Home = (): React.ReactElement => {
             <div className="mb-4 md:mb-0">
               <h3 className="text-xl font-bold text-primary">DevBills</h3>
               <p className="text-text-muted text-sm">
-                © {new Date().getFullYear()} - Todos os direitos reservados
+                © {currentYear} - Todos os direitos reservados
               </p>
             </div>
           </div>
